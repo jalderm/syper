@@ -1,0 +1,101 @@
+{
+  "template": "app",
+  "imports": {
+    "Volo.Abp.LeptonXLiteTheme": {
+      "version": "4.2.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.Account": {
+      "version": "9.2.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.OpenIddict": {
+      "version": "9.2.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.Identity": {
+      "version": "9.2.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.TenantManagement": {
+      "version": "9.2.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.SettingManagement": {
+      "version": "9.2.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.PermissionManagement": {
+      "version": "9.2.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.FeatureManagement": {
+      "version": "9.2.3",
+      "isInstalled": true
+    }
+  },
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {}
+    }
+  },
+  "packages": {
+    "Syper.Application": {
+      "path": "src/Syper.Application/Syper.Application.abppkg",
+      "folder": "src"
+    },
+    "Syper.Application.Tests": {
+      "path": "test/Syper.Application.Tests/Syper.Application.Tests.abppkg",
+      "folder": "test"
+    },
+    "Syper.Domain.Shared": {
+      "path": "src/Syper.Domain.Shared/Syper.Domain.Shared.abppkg",
+      "folder": "src"
+    },
+    "Syper.Application.Contracts": {
+      "path": "src/Syper.Application.Contracts/Syper.Application.Contracts.abppkg",
+      "folder": "src"
+    },
+    "Syper.HttpApi": {
+      "path": "src/Syper.HttpApi/Syper.HttpApi.abppkg",
+      "folder": "src"
+    },
+    "Syper.HttpApi.Client": {
+      "path": "src/Syper.HttpApi.Client/Syper.HttpApi.Client.abppkg",
+      "folder": "src"
+    },
+    "Syper.EntityFrameworkCore.Tests": {
+      "path": "test/Syper.EntityFrameworkCore.Tests/Syper.EntityFrameworkCore.Tests.abppkg",
+      "folder": "test"
+    },
+    "Syper.EntityFrameworkCore": {
+      "path": "src/Syper.EntityFrameworkCore/Syper.EntityFrameworkCore.abppkg",
+      "folder": "src"
+    },
+    "Syper.TestBase": {
+      "path": "test/Syper.TestBase/Syper.TestBase.abppkg",
+      "folder": "test"
+    },
+    "Syper.Domain.Tests": {
+      "path": "test/Syper.Domain.Tests/Syper.Domain.Tests.abppkg",
+      "folder": "test"
+    },
+    "Syper.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/Syper.HttpApi.Client.ConsoleTestApp/Syper.HttpApi.Client.ConsoleTestApp.abppkg",
+      "folder": "test"
+    },
+    "Syper.DbMigrator": {
+      "path": "src/Syper.DbMigrator/Syper.DbMigrator.abppkg",
+      "folder": "src"
+    },
+    "Syper.HttpApi.Host": {
+      "path": "src/Syper.HttpApi.Host/Syper.HttpApi.Host.abppkg",
+      "folder": "src"
+    },
+    "Syper.Domain": {
+      "path": "src/Syper.Domain/Syper.Domain.abppkg",
+      "folder": "src"
+    }
+  }
+}

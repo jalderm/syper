@@ -1,0 +1,30 @@
+<div class="card shadow-sm mb-3">
+  <div class="card-body d-flex align-items-center gap-3">
+    <!-- Icon Section -->
+    <div
+      class="p-3 rounded-circle d-flex align-items-center justify-content-center"
+      [ngClass]="'bg-' + color"
+      style="width:48px; height:48px;"
+    >
+      <i class="material-icons">{{ icon }}</i>
+    </div>
+
+    <!-- Content Section -->
+    <div class="flex-grow-1">
+      <h4 class="h5 mb-1">{{ value }}</h4>
+      <p class="mb-0 text-secondary">{{ title }}</p>
+      <p class="mb-1 text-muted small">{{ subtitle }}</p>
+
+      <!-- Trend Indicator -->
+      <div
+        *ngIf="trend"
+        class="small mt-1"
+        [ngClass]="trend.isPositive ? 'text-success' : 'text-danger'"
+      >
+        <span>
+          {{ trend.isPositive ? '▲' : '▼' }} {{ trend.value }}%
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

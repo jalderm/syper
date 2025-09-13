@@ -1,0 +1,11 @@
+/* baseline colours */
+.bg-blue    { background-color: #007bff !important; color: #fff !important; }
+.bg-green   { background-color: #28a745 !important; color: #fff !important; }
+.bg-orange  { background-color: #fd7e14 !important; color: #fff !important; }
+.bg-purple  { background-color: #6f42c1 !important; color: #fff !important; }
+
+/* Enlarge spinner for loading */
+.abp-loading .abp-spinner { 
+    font-size: 3rem !important;
+    left: calc(50% - 1.5rem) !important;
+}

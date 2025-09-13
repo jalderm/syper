@@ -1,0 +1,80 @@
+{
+  "id": "0d611051-db84-4686-9a72-797013da5df6",
+  "template": "app",
+  "versions": {
+    "AbpFramework": "9.2.3",
+    "AbpStudio": "1.1.2",
+    "TargetDotnetFramework": "net9.0"
+  },
+  "modules": {
+    "Syper": {
+      "path": "Syper.abpmdl",
+      "folder": "main"
+    }
+  },
+  "runProfiles": {
+    "Default": {
+      "path": "etc/abp-studio/run-profiles/Default.abprun.json"
+    }
+  },
+  "options": {
+    "httpRequests": {
+      "ignoredUrls": []
+    }
+  },
+  "creatingStudioConfiguration": {
+    "template": "app",
+    "createdAbpStudioVersion": "1.1.2",
+    "tiered": "false",
+    "runInstallLibs": "true",
+    "useLocalReferences": "false",
+    "multiTenancy": "true",
+    "includeTests": "true",
+    "kubernetesConfiguration": "false",
+    "uiFramework": "angular",
+    "mobileFramework": "none",
+    "distributedEventBus": "none",
+    "databaseProvider": "ef",
+    "runDbMigrator": "true",
+    "databaseManagementSystem": "postgresql",
+    "separateTenantSchema": "false",
+    "createInitialMigration": "true",
+    "theme": "leptonx-lite",
+    "themeStyle": "",
+    "themeMenuPlacement": "",
+    "progressiveWebApp": "false",
+    "runProgressiveWebAppSupport": "false",
+    "publicWebsite": "false",
+    "socialLogin": "false",
+    "selectedLanguages": [
+      "English",
+      "English (United Kingdom)",
+      "简体中文",
+      "Español",
+      "العربية",
+      "हिन्दी",
+      "Português (Brasil)",
+      "Français",
+      "Русский",
+      "Deutsch (Deutschland)",
+      "Türkçe",
+      "Italiano",
+      "Čeština",
+      "Magyar",
+      "Română (România)",
+      "Svenska",
+      "Suomi",
+      "Slovenčina",
+      "Íslenska",
+      "繁體中文"
+    ],
+    "defaultLanguage": "English",
+    "createCommand": "abp new Syper -t app --ui-framework angular --database-provider ef --database-management-system postgresql --theme leptonx-lite --without-cms-kit --sample-crud-page --dont-run-bundling --no-social-logins -no-gdpr -no-openiddict-admin-ui -no-audit-logging -no-file-management -no-language-management -no-text-template-management"
+  },
+  "folders": {
+    "items": {
+      "main": {},
+      "modules": {}
+    }
+  }
+}

@@ -1,0 +1,45 @@
+<div class="mb-4">
+  <h2 class="h4">Dashboard</h2>
+  <p class="text-muted">
+    {{ '::LongWelcomeMessage' | abpLocalization }}
+  </p>
+</div>
+<!-- Stats Grid -->
+<div class="row g-4">
+  <div class="col-12 col-md-6 col-lg-3">
+    <app-stats-card
+      title="{{ '::Home:ActiveRunners' | abpLocalization }}"
+      [value]="activeRunnersCount"
+      icon="directions_run"
+      [trend]="{ value: 15, isPositive: true }"
+      color="blue">
+    </app-stats-card>
+  </div>
+  <div class="col-12 col-md-6 col-lg-3">
+    <app-stats-card
+      title="{{ '::Home:RunsCompleted' | abpLocalization }}"
+      [value]="totalRuns"
+      icon="check_circle"
+      [trend]="{ value: 8, isPositive: true }"
+      color="green">
+    </app-stats-card>
+  </div>
+  <div class="col-12 col-md-6 col-lg-3">
+    <app-stats-card
+      title="{{ '::Home:TotalDistance' | abpLocalization }}"
+      [value]="totalKms"
+      icon="map"
+      [trend]="{ value: 5, isPositive: true }"
+      color="orange">
+    </app-stats-card>
+  </div>
+  <div class="col-12 col-md-6 col-lg-3">
+    <app-stats-card
+      title="{{ '::Home:NextRace' | abpLocalization }}"
+      [value]="nextRace.dateString"
+      [subtitle]="nextRace.name"
+      icon="event"
+      color="purple">
+    </app-stats-card>
+  </div>
+</div>
