@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using Volo.Abp.Domain.Entities.Auditing;
 using System.ComponentModel.DataAnnotations;
+using Syper.ClientStateEnum;
 
 namespace Syper.Coaching
 {
     public class Client : FullAuditedAggregateRoot<Guid>
     {
-        public Guid ClientId { get; set; } // Linked to ABP Identity User
 
         [MaxLength(32)]
         public string FirstName { get; set; }
@@ -15,14 +15,15 @@ namespace Syper.Coaching
         public string LastName { get; set; }
         [MaxLength(128)]
         public string Email { get; set; }
+        public ClientState ClientState { get; set; } = ClientState.Pending;
 
-        public Client(string firstName, string lastName, string email)
+        public Client(string firstName, string lastName, string email, ClientState clientState)
         {
-            ClientId = Guid.NewGuid();
             FirstName = firstName;
             LastName = lastName;
             Email = email;
-            
+            ClientState = clientState;
+
             if (email.Contains("@") == false)
             {
                 throw new ArgumentException("Email must be valid", nameof(email));

@@ -17,6 +17,7 @@
     "Clients:FirstName": "First Name",
     "Clients:LastName": "Last Name",
     "Clients:Email": "Email Address",
+    "Clients:State": "State",
     "CreationTime": "Creation time",
     "AreYouSure": "Are you sure?",
     "AreYouSureToDelete": "Are you sure you want to delete this item?",
@@ -30,6 +31,10 @@
     "Menu:Home": "Home",
     "Menu:Clients": "Clients",
     "LongWelcomeMessage": "Welcome back! Here's a quick overview of clients running this week!",
-    "Welcome": "Welcome"
+    "Welcome": "Welcome",
+
+    "Enum:ClientState.0": "Pending",
+    "Enum:ClientState.1": "Active",
+    "Enum:ClientState.2": "Inactive",
   }
 }

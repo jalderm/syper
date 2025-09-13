@@ -3866,18 +3866,6 @@
       "genericArguments": null,
       "properties": [
         {
-          "name": "ClientId",
-          "jsonName": null,
-          "type": "System.Guid",
-          "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
           "name": "FirstName",
           "jsonName": null,
           "type": "System.String",
@@ -3909,6 +3897,18 @@
           "isRequired": false,
           "minLength": null,
           "maxLength": 128,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ClientState",
+          "jsonName": null,
+          "type": "Syper.ClientStateEnum.ClientState",
+          "typeSimple": "enum",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -3957,8 +3957,36 @@
           "minimum": null,
           "maximum": null,
           "regex": null
+        },
+        {
+          "name": "ClientState",
+          "jsonName": null,
+          "type": "Syper.ClientStateEnum.ClientState",
+          "typeSimple": "enum",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
         }
       ]
+    },
+    "Syper.ClientStateEnum.ClientState": {
+      "baseType": "System.Enum",
+      "isEnum": true,
+      "enumNames": [
+        "Pending",
+        "Active",
+        "Inactive"
+      ],
+      "enumValues": [
+        0,
+        1,
+        2
+      ],
+      "genericArguments": null,
+      "properties": null
     },
     "Volo.Abp.Account.ChangePasswordInput": {
       "baseType": null,

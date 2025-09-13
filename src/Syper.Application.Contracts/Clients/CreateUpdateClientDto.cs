@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Syper.ClientStateEnum;
 
 namespace Syper.Clients;
 
@@ -17,4 +18,6 @@ public class CreateUpdateClientDto
     [EmailAddress]
     [StringLength(128)]
     public string Email { get; set; } = string.Empty;
+
+    public ClientState ClientState { get; set; } = ClientState.Pending;
 }

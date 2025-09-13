@@ -1,2 +1,3 @@
+import * as ClientStateEnum from './client-state-enum';
 import * as Clients from './clients';
-export { Clients };
+export { ClientStateEnum, Clients };

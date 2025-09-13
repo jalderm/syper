@@ -22,6 +22,11 @@
       <ngx-datatable-column [name]="'::FirstName' | abpLocalization" prop="firstName"></ngx-datatable-column>
       <ngx-datatable-column [name]="'::LastName' | abpLocalization" prop="lastName"></ngx-datatable-column>
       <ngx-datatable-column [name]="'::Email' | abpLocalization" prop="email"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::State' | abpLocalization" prop="clientState">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ '::Enum:ClientState.' + row.clientState | abpLocalization }}
+        </ng-template>
+      </ngx-datatable-column>
       
       <ngx-datatable-column
         [name]="'::Actions' | abpLocalization"
@@ -49,11 +54,7 @@
           </div>
         </ng-template>
       </ngx-datatable-column>
-      <!-- <ngx-datatable-column [name]="'::Type' | abpLocalization" prop="type">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          {{ '::Enum:ClientType.' + row.type | abpLocalization }}
-        </ng-template>
-      </ngx-datatable-column> -->
+      
       <!-- <ngx-datatable-column [name]="'::PublishDate' | abpLocalization" prop="publishDate">
         <ng-template let-row="row" ngx-datatable-cell-template>
           {{ row.publishDate | date }}
@@ -78,26 +79,26 @@
     <form [formGroup]="form" (ngSubmit)="save()">
       <div class="mt-2">
         <label for="client-name">{{ '::FirstName' | abpLocalization }}</label><span> * </span>
-        <input type="text" id="client-name" class="form-control" formControlName="firstName" autofocus />
+        <input type="text" id="client-firstName" class="form-control" formControlName="firstName" autofocus />
       </div>
 
       <div class="mt-2">
         <label for="client-name">{{ '::LastName' | abpLocalization }}</label><span> * </span>
-        <input type="text" id="client-name" class="form-control" formControlName="lastName" autofocus />
+        <input type="text" id="client-lastName" class="form-control" formControlName="lastName" autofocus />
       </div>
 
       <div class="mt-2">
         <label for="client-name">{{ '::Email' | abpLocalization }}</label><span> * </span>
-        <input type="text" id="client-name" class="form-control" formControlName="email" autofocus />
+        <input type="text" id="client-email" class="form-control" formControlName="email" autofocus />
       </div>
 
-      <!-- <div class="mt-2">
-        <label for="client-type">Type</label><span> * </span>
-        <select class="form-control" id="client-type" formControlName="type">
-          <option [ngValue]="null">Select a client type</option>
-          <option [ngValue]="type.value" *ngFor="let type of clientTypes"> {{ '::Enum:ClientType.' + type.value | abpLocalization }}</option>
+      <div class="mt-2">
+        <label for="client-state">State</label><span> * </span>
+        <select class="form-control" id="client-clientState" formControlName="clientState">
+          <option [ngValue]="null">Select the state the client should be in</option>
+          <option [ngValue]="state.value" *ngFor="let state of clientStates"> {{ '::Enum:ClientState.' + state.value | abpLocalization }}</option>
         </select>
-      </div> -->
+      </div>
 
       <!-- <div class="mt-2">
         <label>Publish date</label><span> * </span>

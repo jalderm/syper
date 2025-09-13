@@ -85,6 +85,12 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
         if (!consoleAndAngularClientId.IsNullOrWhiteSpace())
         {
             var consoleAndAngularClientRootUrl = configurationSection["Syper_App:RootUrl"]?.TrimEnd('/');
+
+            if (consoleAndAngularClientRootUrl.IsNullOrWhiteSpace())
+            {
+                throw new BusinessException(L["RootUrlCannotBeNullOrEmpty", "Syper_App"]);
+            }
+
             await CreateApplicationAsync(
                 applicationType: OpenIddictConstants.ApplicationTypes.Web,
                 name: consoleAndAngularClientId!,
@@ -119,6 +125,11 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
         if (!swaggerClientId.IsNullOrWhiteSpace())
         {
             var swaggerRootUrl = configurationSection["Syper_Swagger:RootUrl"]?.TrimEnd('/');
+
+            if (swaggerRootUrl.IsNullOrEmpty())
+            {
+                throw new BusinessException(L["RootUrlCannotBeNullOrEmpty", "Syper_Swagger"]);
+            }
 
             await CreateApplicationAsync(
                 applicationType: OpenIddictConstants.ApplicationTypes.Web,

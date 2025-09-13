@@ -86,7 +86,6 @@ public class SyperDbContext :
             b.ToTable(SyperConsts.DbTablePrefix + "Clients",
                 SyperConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
-            b.Property(x => x.ClientId).IsRequired().HasMaxLength(32);
             b.Property(x => x.FirstName).IsRequired().HasMaxLength(32);
             b.Property(x => x.LastName).IsRequired().HasMaxLength(32);
             b.Property(x => x.Email).IsRequired().HasMaxLength(128);

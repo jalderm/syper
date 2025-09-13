@@ -5,6 +5,7 @@ import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
 import { ClientService, ClientDto } from '../proxy/clients';
 import { LoadingService } from '../services/loading.service';
+import { ClientState } from '../proxy/client-state-enum';
 
 @Component({
   standalone: false,
@@ -15,6 +16,9 @@ import { LoadingService } from '../services/loading.service';
 })
 export class ClientComponent implements OnInit {
   client = { items: [], totalCount: 0 } as PagedResultDto<ClientDto>;
+  clientStates = Object.keys(ClientState)
+  .filter(key => isNaN(Number(key)))
+  .map(key => ({ value: ClientState[key], name: key }));
 
   selectedClient = {} as ClientDto; // declare selectedClient
 
@@ -69,7 +73,8 @@ export class ClientComponent implements OnInit {
     this.form = this.fb.group({
       firstName: [this.selectedClient.firstName || '', Validators.required],
       lastName: [this.selectedClient.lastName || '', Validators.required],
-      email: [this.selectedClient.email || '', Validators.required]
+      email: [this.selectedClient.email || '', Validators.required],
+      clientState: [this.selectedClient.clientState, Validators.required]
     });
   }
 
