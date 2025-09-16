@@ -5,6 +5,8 @@ using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
 using Syper.Clients;
 using Syper.ClientStateEnum;
+using Syper.Exercises;
+using Syper.ExerciseCategories;
 
 namespace Syper;
 
@@ -12,10 +14,15 @@ public class SyperDataSeederContributor
     : IDataSeedContributor, ITransientDependency
 {
     private readonly IRepository<Client, Guid> _clientRepository;
+    private readonly IRepository<Exercise, Guid> _exerciseRepository;
 
-    public SyperDataSeederContributor(IRepository<Client, Guid> clientRepository)
+    public SyperDataSeederContributor(
+        IRepository<Client, Guid> clientRepository,
+        IRepository<Exercise, Guid> exerciseRepository
+        )
     {
         _clientRepository = clientRepository;
+        _exerciseRepository = exerciseRepository;
     }
 
     public async Task SeedAsync(DataSeedContext context)
@@ -33,6 +40,18 @@ public class SyperDataSeederContributor
             );
             await _clientRepository.InsertAsync(
                 new Client("Jane", "Smith", "jane.smith@gmail.com", ClientState.Pending),
+                autoSave: true
+            );
+        }
+
+        if (await _exerciseRepository.GetCountAsync() <= 0)
+        {
+            await _exerciseRepository.InsertAsync(
+                new Exercise("Run (Distance)", ExerciseCategory.Distance),
+                autoSave: true
+            );
+            await _exerciseRepository.InsertAsync(
+                new Exercise("Run (Time)", ExerciseCategory.Time),
                 autoSave: true
             );
         }

@@ -22,6 +22,7 @@ using Syper.Sets;
 using Syper.Workouts;
 using Syper.WorkoutSections;
 using Syper.WorkoutExercises;
+using Syper.Exercises;
 
 [ReplaceDbContext(typeof(IIdentityDbContext))]
 [ReplaceDbContext(typeof(ITenantManagementDbContext))]
@@ -35,6 +36,7 @@ public class SyperDbContext :
 
     public DbSet<Client> Clients { get; set; }
     public DbSet<Workout> Workouts { get; set; }
+    public DbSet<Exercise> Exercises { get; set; }
 
     #region Entities from the modules
 
@@ -97,6 +99,15 @@ public class SyperDbContext :
             b.Property(x => x.Email).IsRequired().HasMaxLength(128);
             b.Property(x => x.ClientState).IsRequired();
             b.HasIndex(x => x.Email).IsUnique();
+        });
+
+        builder.Entity<Exercise>(b =>
+        {
+            b.ToTable(SyperConsts.DbTablePrefix + "Exercises",
+                SyperConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.Title).IsRequired().HasMaxLength(32);
+            b.Property(x => x.ExerciseCategory).IsRequired().HasMaxLength(32);
         });
 
         builder.Entity<Set>(b =>

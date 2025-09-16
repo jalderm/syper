@@ -11,11 +11,12 @@ namespace Syper.Exercises
         [MaxLength(32)]
         public string Title { get; set; }
         public ExerciseCategory ExerciseCategory { get; set; } = ExerciseCategory.Distance;
-        
 
-        public Exercise(string title)
+
+        public Exercise(string title, ExerciseCategory exerciseCategory)
         {
             Title = title;
+            ExerciseCategory = exerciseCategory;
         }
     }
 

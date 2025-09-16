@@ -2,7 +2,7 @@ import { ListService, PagedResultDto } from '@abp/ng.core';
 import { ChangeDetectorRef, Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { WorkoutDto, WorkoutService } from '../proxy/workouts';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { LoadingService } from '../services/loading.service';
 import { WorkoutSectionDto } from '../proxy/workout-sections';
 import {
@@ -59,6 +59,7 @@ export class WorkoutComponent implements OnInit {
 
   ngOnInit() {
     const workoutStreamCreator = (query) => this.workoutService.getList(query);
+    // const exerciseStreamCreator = (query) => this.workoutService.getList(query);
 
     this.list.hookToQuery(workoutStreamCreator).subscribe((response) => {
       this.workout = response;
@@ -111,8 +112,9 @@ export class WorkoutComponent implements OnInit {
 
   workoutSectionsConstraint() {
     const min = 1;
-    return (fa: FormArray) => {
-      return fa && fa.length >= min ? null : { minLengthArray: { valid: false } };
+    return (c: AbstractControl): ValidationErrors | null => {
+      const formArray = c as FormArray;
+      return formArray.controls.length >= min ? null : { minLengthArray: true };
     };
   }
 

@@ -87,11 +87,14 @@
             <button class="btn btn-outline-secondary me-2" type="button" ngbAccordionButton>
               <input 
                 type="text"
-                class="form-control d-inline-block w-75"
+                class="form-control d-inline-block mr-0_5"
                 placeholder="Section Title"
                 formControlName="title" 
                 (click)="$event.stopPropagation(); $event.preventDefault();"
                 (keydown.space)="onSpace($event)" />
+              <button id="deleteSection" class="btn btn-danger mr-0_5" type="button" (click)="removeSection(i)">
+                <i class="fas fa-trash"></i>
+              </button>
             </button>
           </h2>
 
@@ -108,13 +111,16 @@
                 <div class="row">
                   <div class="card-header">
                     <div class="row">
-                      <div class="col-9">
+                      <div class="col-8">
                         <h6 class="card-title">
                           {{ exercise.controls.name.value }}
                         </h6>
                       </div>
-                      <div class="text-end col-3" cdkDragHandle>
-                        <div class="text-lg-end">
+                      <div class="text-end col-4" cdkDragHandle>
+                        <div class="text-lg-end pad-children-1">
+                          <button id="deleteExercise" class="btn btn-danger mr-0_5" type="button" (click)="removeExercise(i, j)">
+                            <i class="fas fa-trash"></i>
+                          </button>
                           <button id="move" class="btn btn-outline-primary" type="button">
                             <i class="fas fa-bars"></i>
                           </button>
@@ -124,7 +130,7 @@
                   </div>
                 </div>
 
-                <div class="card-body" style="padding: 1.5rem !important">
+                <div class="card-body" style="padding: 0.75rem !important">
                   <div *ngFor="let set of getSets(i,j).controls; let k = index" [formGroup]="setForm" class="row g-2 align-items-end mb-1">
                     <div class="col">
                       <label *ngIf="k==0">
@@ -144,17 +150,19 @@
                       <input type="text" class="form-control" pattern="[0-5][0-9]:[0-5][0-9]" placeholder="MM:SS" formControlName="rest">
                     </div>
                     <div class="col-auto">
-                      <button type="button" class="btn btn-sm btn-danger" (click)="removeSet(i,j,k)">X</button>
+                      <button type="button" class="btn btn-sm btn-danger mt-1 mb-1" (click)="removeSet(i,j,k)">
+                        <i class="fas fa-trash"></i>
+                      </button>
                     </div>
                   </div>
                   <button type="button" class="btn btn-sm btn-outline-primary mb-2" (click)="addSet(i, j)">
                     + Add Set
                   </button>
-                  <div>
+                  <!-- <div>
                     <button type="button" class="btn btn-sm btn-danger mt-2" (click)="removeExercise(i, j)">
                       - Remove Exercise
                     </button>
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <div *ngIf="getExercises(i).controls.length == 0" class="m-2">
@@ -164,11 +172,11 @@
             <button type="button" class="btn btn-sm btn-secondary mb-2" (click)="addExercise(i)">
               + Add Exercise
             </button>
-            <div>
+            <!-- <div>
               <button type="button" class="btn btn-sm btn-danger mt-2" (click)="removeSection(i)">
                 Remove Section
               </button>
-            </div>
+            </div> -->
           </div>
         </div>
 

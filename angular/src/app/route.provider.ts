@@ -27,7 +27,7 @@ function configureRoutes() {
       {
         path: '/workouts',
         name: '::Menu:Workouts',
-        iconClass: 'fas fa-person-running',
+        iconClass: 'fas fa-heart-pulse',
         layout: eLayoutType.application,
         requiredPolicy: 'Syper.Workouts',
       },

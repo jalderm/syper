@@ -29,3 +29,7 @@
   border-top-right-radius: var(--bs-accordion-border-radius);
   border: var(--bs-accordion-border-width) solid var(--bs-accordion-border-color);
 }
+
+button.mr-0_5, input.mr-0_5 {
+  margin-right: 0.5rem !important;
+}
