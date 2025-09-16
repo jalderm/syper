@@ -130,20 +130,20 @@
                 <div class="card-body">
                   <div *ngFor="let set of getSets(i,j).controls; let k = index" [formGroup]="setForm" class="row g-2 align-items-end mb-1">
                     <div class="col">
-                      <label>
+                      <label *ngIf="k==0">
                         {{  getUnitTitle(set.controls.unitType.value) }}
                       </label>
                       <input type="number" class="form-control" formControlName="unit" />
                     </div>
                     <div class="col">
-                      <label>
+                      <label *ngIf="k==0">
                         {{  getQuantityTitle(set.controls.quantityType.value) }}
                       </label>
                       <input *ngIf="set.controls.quantityType.value == SetQuantityType.Time" type="text" class="form-control" pattern="[0-5][0-9]:[0-5][0-9]" placeholder="MM:SS" formControlName="quantity" />
                       <input *ngIf="set.controls.quantityType.value != SetQuantityType.Time" type="number" class="form-control" formControlName="quantity" />
                     </div>
                     <div class="col">
-                      <label>Rest (optional)</label>
+                      <label *ngIf="k==0">Rest (optional)</label>
                       <input type="text" class="form-control" pattern="[0-5][0-9]:[0-5][0-9]" placeholder="MM:SS" formControlName="rest">
                     </div>
                     <div class="col-auto">
@@ -154,7 +154,7 @@
                     + Add Set
                   </button>
                   <div>
-                    <button type="button" class="btn btn-sm btn-danger mt-2" (click)="removeExercise(j)">
+                    <button type="button" class="btn btn-sm btn-danger mt-2" (click)="removeExercise(i, j)">
                       - Remove Exercise
                     </button>
                   </div>
