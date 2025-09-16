@@ -20,3 +20,12 @@
   width: 24px;
   height: 24px;
 }
+
+.workoutList {
+  min-height: 2rem;
+  border-bottom-right-radius: var(--bs-accordion-border-radius);
+  border-bottom-left-radius: var(--bs-accordion-border-radius);
+  border-top-left-radius: var(--bs-accordion-border-radius);
+  border-top-right-radius: var(--bs-accordion-border-radius);
+  border: var(--bs-accordion-border-width) solid var(--bs-accordion-border-color);
+}

@@ -8,7 +8,7 @@
       </div>
       <div class="text-end col col-md-6">
 
-        <div class="text-lg-end pt-2">
+        <div class="text-lg-end">
           <button *abpPermission="'Syper.Clients.Create'" id="create" class="btn btn-primary" type="button" (click)="createWorkout()">
             <i class="fa fa-plus me-1"></i>
             <span>{{ '::NewWorkout' | abpLocalization }}</span>
@@ -96,16 +96,13 @@
           </h2>
 
           <div ngbAccordionBody>
-            <button type="button" class="btn btn-sm btn-secondary mb-2" (click)="addExercise(i)">
-              + Add Exercise
-            </button>
-              
             <div 
               cdkDropList
               #dropList="cdkDropList"
               [cdkDropListData]="getExercises(i).controls"
               [cdkDropListConnectedTo]="connectedDropLists(i)"
-              (cdkDropListDropped)="drop($event, i)">
+              (cdkDropListDropped)="drop($event, i)"
+              class="workoutList mb-2">
               
               <div class="card"  *ngFor="let exercise of getExercises(i).controls; let j = index" [formGroup]="exercise" cdkDrag>
                 <div class="row">
@@ -117,7 +114,7 @@
                         </h6>
                       </div>
                       <div class="text-end col-3" cdkDragHandle>
-                        <div class="text-lg-end pt-2">
+                        <div class="text-lg-end">
                           <button id="move" class="btn btn-outline-primary" type="button">
                             <i class="fas fa-bars"></i>
                           </button>
@@ -127,7 +124,7 @@
                   </div>
                 </div>
 
-                <div class="card-body">
+                <div class="card-body" style="padding: 1.5rem !important">
                   <div *ngFor="let set of getSets(i,j).controls; let k = index" [formGroup]="setForm" class="row g-2 align-items-end mb-1">
                     <div class="col">
                       <label *ngIf="k==0">
@@ -139,7 +136,7 @@
                       <label *ngIf="k==0">
                         {{  getQuantityTitle(set.controls.quantityType.value) }}
                       </label>
-                      <input *ngIf="set.controls.quantityType.value == SetQuantityType.Time" type="text" class="form-control" pattern="[0-5][0-9]:[0-5][0-9]" placeholder="MM:SS" formControlName="quantity" />
+                      <input *ngIf="set.controls.quantityType.value == SetQuantityType.Time" type="text" class="form-control" pattern="[0-5][0-9]:[0-5][0-9]:[0-5][0-9]" placeholder="HH:MM:SS" formControlName="quantity" />
                       <input *ngIf="set.controls.quantityType.value != SetQuantityType.Time" type="number" class="form-control" formControlName="quantity" />
                     </div>
                     <div class="col">
@@ -160,7 +157,13 @@
                   </div>
                 </div>
               </div>
+              <div *ngIf="getExercises(i).controls.length == 0" class="m-2">
+                <h6>No exercises yet.</h6>
+              </div>
             </div>
+            <button type="button" class="btn btn-sm btn-secondary mb-2" (click)="addExercise(i)">
+              + Add Exercise
+            </button>
             <div>
               <button type="button" class="btn btn-sm btn-danger mt-2" (click)="removeSection(i)">
                 Remove Section
