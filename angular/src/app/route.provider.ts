@@ -24,5 +24,12 @@ function configureRoutes() {
         layout: eLayoutType.application,
         requiredPolicy: 'Syper.Clients',
       },
+      {
+        path: '/workouts',
+        name: '::Menu:Workouts',
+        iconClass: 'fas fa-person-running',
+        layout: eLayoutType.application,
+        requiredPolicy: 'Syper.Workouts',
+      },
   ]);
 }

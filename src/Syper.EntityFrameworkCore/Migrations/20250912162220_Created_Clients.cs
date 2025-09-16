@@ -37,12 +37,6 @@ namespace Syper.Migrations
                 {
                     table.PrimaryKey("PK_AppClients", x => x.Id);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppClients_Email",
-                table: "AppClients",
-                column: "Email",
-                unique: true);
         }
 
         /// <inheritdoc />

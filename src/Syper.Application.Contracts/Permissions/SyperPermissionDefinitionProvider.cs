@@ -15,8 +15,11 @@ public class SyperPermissionDefinitionProvider : PermissionDefinitionProvider
         clientsPermission.AddChild(SyperPermissions.Clients.Create, L("Permission:clients.Create"));
         clientsPermission.AddChild(SyperPermissions.Clients.Edit, L("Permission:clients.Edit"));
         clientsPermission.AddChild(SyperPermissions.Clients.Delete, L("Permission:clients.Delete"));
-        //Define your own permissions here. Example:
-        //myGroup.AddPermission(SyperPermissions.MyPermission1, L("Permission:MyPermission1"));
+
+        var workoutsPermission = myGroup.AddPermission(SyperPermissions.Workouts.Default, L("Permission:workouts"));
+        workoutsPermission.AddChild(SyperPermissions.Workouts.Create, L("Permission:workouts.Create"));
+        workoutsPermission.AddChild(SyperPermissions.Workouts.Edit, L("Permission:workouts.Edit"));
+        workoutsPermission.AddChild(SyperPermissions.Workouts.Delete, L("Permission:workouts.Delete"));        
     }
 
     private static LocalizableString L(string name)

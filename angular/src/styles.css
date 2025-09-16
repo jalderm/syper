@@ -9,3 +9,18 @@
     font-size: 3rem !important;
     left: calc(50% - 1.5rem) !important;
 }
+
+
+/* Width bootstraps */
+.w-25 {
+  width: 25%;
+}
+.w-50 {
+  width: 50%;
+}
+.w-75 {
+  width: 75%;
+}
+.w-100 {
+  width: 100%;
+}

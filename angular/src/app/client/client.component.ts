@@ -12,10 +12,10 @@ import { ClientState } from '../proxy/client-state-enum';
   selector: 'app-client',
   templateUrl: './client.component.html',
   styleUrls: ['./client.component.scss'],
-  providers: [ListService, { provide: NgbDateAdapter, useClass: NgbDateNativeAdapter }],
+  providers: [ListService],
 })
 export class ClientComponent implements OnInit {
-  client = { items: [], totalCount: 0 } as PagedResultDto<ClientDto>;
+  clients = { items: [], totalCount: 0 } as PagedResultDto<ClientDto>;
   clientStates = Object.keys(ClientState)
   .filter(key => isNaN(Number(key)))
   .map(key => ({ value: ClientState[key], name: key }));
@@ -38,7 +38,7 @@ export class ClientComponent implements OnInit {
     const clientStreamCreator = (query) => this.clientService.getList(query);
 
     this.list.hookToQuery(clientStreamCreator).subscribe((response) => {
-      this.client = response;
+      this.clients = response;
     });
   }
 

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using Volo.Abp.Domain.Entities.Auditing;
 using System.ComponentModel.DataAnnotations;
 using Syper.ClientStateEnum;
+using Syper.MultiTenancy;
 
-namespace Syper.Coaching
+namespace Syper.Clients
 {
-    public class Client : FullAuditedAggregateRoot<Guid>
+    public class Client : MultiTenantFullAuditedAggregateRoot<Guid>
     {
 
         [MaxLength(32)]

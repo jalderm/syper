@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Volo.Abp.Domain.Entities.Auditing;
 
-namespace Syper.Coaching
+namespace Syper.Clients
 {
     // 1. Coach
     // public class Coach : FullAuditedAggregateRoot<Guid>

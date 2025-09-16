@@ -14,9 +14,14 @@ using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
-using Syper.Coaching;
 
 namespace Syper.EntityFrameworkCore;
+
+using Syper.Clients;
+using Syper.Sets;
+using Syper.Workouts;
+using Syper.WorkoutSections;
+using Syper.WorkoutExercises;
 
 [ReplaceDbContext(typeof(IIdentityDbContext))]
 [ReplaceDbContext(typeof(ITenantManagementDbContext))]
@@ -29,6 +34,7 @@ public class SyperDbContext :
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
 
     public DbSet<Client> Clients { get; set; }
+    public DbSet<Workout> Workouts { get; set; }
 
     #region Entities from the modules
 
@@ -80,7 +86,7 @@ public class SyperDbContext :
         builder.ConfigureOpenIddict();
         builder.ConfigureTenantManagement();
         builder.ConfigureBlobStoring();
-        
+
         builder.Entity<Client>(b =>
         {
             b.ToTable(SyperConsts.DbTablePrefix + "Clients",
@@ -89,16 +95,54 @@ public class SyperDbContext :
             b.Property(x => x.FirstName).IsRequired().HasMaxLength(32);
             b.Property(x => x.LastName).IsRequired().HasMaxLength(32);
             b.Property(x => x.Email).IsRequired().HasMaxLength(128);
+            b.Property(x => x.ClientState).IsRequired();
             b.HasIndex(x => x.Email).IsUnique();
         });
-        
-        /* Configure your own tables/entities inside here */
 
-        //builder.Entity<YourEntity>(b =>
-        //{
-        //    b.ToTable(SyperConsts.DbTablePrefix + "YourEntities", SyperConsts.DbSchema);
-        //    b.ConfigureByConvention(); //auto configure for the base class props
-        //    //...
-        //});
+        builder.Entity<Set>(b =>
+        {
+            b.ToTable(SyperConsts.DbTablePrefix + "Sets",
+                SyperConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.Unit).IsRequired();
+            b.Property(x => x.UnitType).IsRequired();
+            b.Property(x => x.Quantity).IsRequired();
+            b.Property(x => x.QuantityType).IsRequired();
+            b.Property(x => x.Rest).IsRequired(false);
+        });
+
+        builder.Entity<Workout>(b =>
+        {
+            b.ToTable(SyperConsts.DbTablePrefix + "Workouts",
+                SyperConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.Name).IsRequired().HasMaxLength(32);
+            b.Property(x => x.ShortDescription).IsRequired().HasMaxLength(255);
+            b.HasMany(x => x.WorkoutSections).WithOne().HasForeignKey(x => x.WorkoutId).IsRequired();
+        });
+
+        builder.Entity<WorkoutSection>(b =>
+        {
+            b.ToTable(SyperConsts.DbTablePrefix + "WorkoutSections",
+                SyperConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.Title).IsRequired().HasMaxLength(32);
+            b.Property(x => x.Colour).IsRequired().HasMaxLength(32);
+            b.Property(x => x.WorkoutId).IsRequired();
+            b.HasOne(x => x.Workout).WithMany(x => x.WorkoutSections).HasForeignKey(x => x.WorkoutId).IsRequired();
+            b.HasMany(x => x.WorkoutExercises).WithOne().HasForeignKey(x => x.WorkoutSectionId).IsRequired();
+        });
+        
+        builder.Entity<WorkoutExercise>(b =>
+        {
+            b.ToTable(SyperConsts.DbTablePrefix + "WorkoutExercises",
+                SyperConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.WorkoutSectionId).IsRequired();
+            b.HasOne(x => x.WorkoutSection).WithMany(x => x.WorkoutExercises).HasForeignKey(x => x.WorkoutSectionId).IsRequired();
+            b.Property(x => x.ExerciseId).IsRequired();
+            b.HasOne(x => x.Exercise).WithMany().HasForeignKey(x => x.ExerciseId).IsRequired();
+            b.HasMany(x => x.Sets).WithOne().HasForeignKey(x => x.WorkoutExerciseId).IsRequired();
+        });
     }
 }

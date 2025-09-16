@@ -1,0 +1,218 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row">
+      <div class="col col-md-6">
+        <h5 class="card-title">
+          {{ '::Menu:Workouts' | abpLocalization }}
+        </h5>
+      </div>
+      <div class="text-end col col-md-6">
+
+        <div class="text-lg-end pt-2">
+          <button *abpPermission="'Syper.Clients.Create'" id="create" class="btn btn-primary" type="button" (click)="createWorkout()">
+            <i class="fa fa-plus me-1"></i>
+            <span>{{ '::NewWorkout' | abpLocalization }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <ngx-datatable [rows]="workout.items" [count]="workout.totalCount" [list]="list" default>
+      <ngx-datatable-column [name]="'::Name' | abpLocalization" prop="firstName"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Exercises' | abpLocalization">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.workoutExercises?.length || 0 }}
+            </ng-template>
+        </ngx-datatable-column>
+      
+      
+      <ngx-datatable-column
+        [name]="'::Actions' | abpLocalization"
+        [maxWidth]="150"
+        [sortable]="false"
+      >
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <div ngbDropdown container="body" class="d-inline-block">
+            <button
+              class="btn btn-primary btn-sm dropdown-toggle"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              ngbDropdownToggle
+            >
+              <i class="fa fa-cog me-1"></i>{{ '::Actions' | abpLocalization }}
+            </button>
+            <div ngbDropdownMenu>
+              <button *abpPermission="'Syper.Clients.Edit'" ngbDropdownItem (click)="editClient(row.id)">
+                {{ '::Edit' | abpLocalization }}
+              </button>
+              <button *abpPermission="'Syper.Clients.Delete'" ngbDropdownItem (click)="delete(row.id)">
+                {{ '::Delete' | abpLocalization }}
+              </button>
+            </div>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+      
+      <!-- <ngx-datatable-column [name]="'::PublishDate' | abpLocalization" prop="publishDate">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.publishDate | date }}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Price' | abpLocalization" prop="price">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.price | currency }}
+        </ng-template>
+      </ngx-datatable-column> -->
+    </ngx-datatable>
+  </div>
+</div>
+
+<!-- Add the modal here -->
+<abp-modal [(visible)]="isModalOpen" [options]="{ size: 'xl' }">
+  <ng-template #abpHeader>
+    <h3>{{ (selectedWorkout.id ? '::Edit' : '::NewWorkout' ) | abpLocalization }}</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <div class="mt-2">
+        <label>{{ '::Name' | abpLocalization }}</label><span> * </span>
+        <input type="text" class="form-control" formControlName="name" autofocus />
+      </div>
+
+      <div ngbAccordion class="mt-3" [animation]="false">
+        <div *ngFor="let section of workoutSections.controls; let i = index" ngbAccordionItem [formGroup]="sectionsForm">
+          <h2 ngbAccordionHeader>
+            <button class="btn btn-outline-secondary me-2" type="button" ngbAccordionButton>
+              <input 
+                type="text"
+                class="form-control d-inline-block w-75"
+                placeholder="Section Title"
+                formControlName="title" 
+                (click)="$event.stopPropagation(); $event.preventDefault();"
+                (keydown.space)="onSpace($event)" />
+            </button>
+          </h2>
+
+          <div ngbAccordionBody>
+            <button type="button" class="btn btn-sm btn-secondary mb-2" (click)="addExercise(i)">
+              + Add Exercise
+            </button>
+              
+            <div 
+              cdkDropList
+              #dropList="cdkDropList"
+              [cdkDropListData]="getExercises(i).controls"
+              [cdkDropListConnectedTo]="connectedDropLists(i)"
+              (cdkDropListDropped)="drop($event, i)">
+              
+              <div class="card"  *ngFor="let exercise of getExercises(i).controls; let j = index" [formGroup]="exercise" cdkDrag>
+                <div class="row">
+                  <div class="card-header">
+                    <div class="row">
+                      <div class="col-9">
+                        <h6 class="card-title">
+                          {{ exercise.controls.name.value }}
+                        </h6>
+                      </div>
+                      <div class="text-end col-3" cdkDragHandle>
+                        <div class="text-lg-end pt-2">
+                          <button id="move" class="btn btn-outline-primary" type="button">
+                            <i class="fas fa-bars"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <div *ngFor="let set of getSets(i,j).controls; let k = index" [formGroup]="setForm" class="row g-2 align-items-end mb-1">
+                    <div class="col">
+                      <label>
+                        {{  getUnitTitle(set.controls.unitType.value) }}
+                      </label>
+                      <input type="number" class="form-control" formControlName="unit" />
+                    </div>
+                    <div class="col">
+                      <label>
+                        {{  getQuantityTitle(set.controls.quantityType.value) }}
+                      </label>
+                      <input *ngIf="set.controls.quantityType.value == SetQuantityType.Time" type="text" class="form-control" pattern="[0-5][0-9]:[0-5][0-9]" placeholder="MM:SS" formControlName="quantity" />
+                      <input *ngIf="set.controls.quantityType.value != SetQuantityType.Time" type="number" class="form-control" formControlName="quantity" />
+                    </div>
+                    <div class="col">
+                      <label>Rest (optional)</label>
+                      <input type="text" class="form-control" pattern="[0-5][0-9]:[0-5][0-9]" placeholder="MM:SS" formControlName="rest">
+                    </div>
+                    <div class="col-auto">
+                      <button type="button" class="btn btn-sm btn-danger" (click)="removeSet(i,j,k)">X</button>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-sm btn-outline-primary mb-2" (click)="addSet(i, j)">
+                    + Add Set
+                  </button>
+                  <div>
+                    <button type="button" class="btn btn-sm btn-danger mt-2" (click)="removeExercise(j)">
+                      - Remove Exercise
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <button type="button" class="btn btn-sm btn-danger mt-2" (click)="removeSection(i)">
+                Remove Section
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="mt-3">
+        <button type="button" class="btn btn-sm btn-primary" (click)="addSection()">
+          + Add Section
+        </button>
+      </div>
+
+
+
+          <!-- <ngb-panel *ngFor="let section of workoutSections.controls; let i = index" [title]="'Section ' + (i+1)">
+            <ng-template ngbPanelContent>
+              <div [formGroup]="section">
+                <div class="mb-2">
+                  <input type="text" class="form-control" placeholder="Section Title" formControlName="title" />
+                </div>
+                <div class="mb-2">
+                  <input type="color" class="form-control" formControlName="colour" />
+                </div>
+
+                <button type="button" class="btn btn-sm btn-secondary mb-2" (click)="addExercise(i)">
+                  + Add Exercise
+                </button>
+
+                <div *ngFor="let exercise of getExercises(i).controls; let j = index" [formGroup]="exercise" class="card mb-2">
+                  
+                </div>
+              </div>
+            </ng-template>
+          </ngb-panel> -->
+    </form>
+  </ng-template>
+
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Close' | abpLocalization }}
+    </button>
+
+    <!--added save button-->
+    <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
+      <i class="fa fa-check mr-1"></i>
+      {{ '::Save' | abpLocalization }}
+    </button>
+  </ng-template>
+
+</abp-modal>

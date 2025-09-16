@@ -18,7 +18,7 @@
     </div>
   </div>
   <div class="card-body">
-    <ngx-datatable [rows]="client.items" [count]="client.totalCount" [list]="list" default>
+    <ngx-datatable [rows]="clients.items" [count]="clients.totalCount" [list]="list" default>
       <ngx-datatable-column [name]="'::FirstName' | abpLocalization" prop="firstName"></ngx-datatable-column>
       <ngx-datatable-column [name]="'::LastName' | abpLocalization" prop="lastName"></ngx-datatable-column>
       <ngx-datatable-column [name]="'::Email' | abpLocalization" prop="email"></ngx-datatable-column>

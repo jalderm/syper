@@ -27,7 +27,7 @@ namespace Syper.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Syper.Coaching.Client", b =>
+            modelBuilder.Entity("Syper.Clients.Client", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");

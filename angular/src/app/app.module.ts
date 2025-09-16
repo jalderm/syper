@@ -26,7 +26,7 @@ import { APP_ROUTE_PROVIDER } from './route.provider';
     ThemeSharedModule,
     CoreModule,
     ThemeLeptonXModule.forRoot(),
-    SideMenuLayoutModule.forRoot(),
+    SideMenuLayoutModule.forRoot()
   ],
   providers: [
     APP_ROUTE_PROVIDER,

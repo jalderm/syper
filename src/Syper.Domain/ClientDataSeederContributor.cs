@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
-using Syper.Coaching;
+using Syper.Clients;
 using Syper.ClientStateEnum;
 
 namespace Syper;
@@ -22,6 +22,11 @@ public class SyperDataSeederContributor
     {
         if (await _clientRepository.GetCountAsync() <= 0)
         {
+            if (!context.TenantId.HasValue)
+            {
+                // Skip seeding for host
+                return;
+            }
             await _clientRepository.InsertAsync(
                 new Client("John", "Doe", "john.doe@gmail.com", ClientState.Active),
                 autoSave: true
