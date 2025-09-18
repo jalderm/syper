@@ -1,8 +1,8 @@
 import { ListService, PagedResultDto } from '@abp/ng.core';
-import { ChangeDetectorRef, Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { ChangeDetectorRef, Component, forwardRef, Input, NgModule, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { WorkoutDto, WorkoutService } from '../proxy/workouts';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, ControlValueAccessor, FormArray, FormBuilder, FormGroup, NG_VALUE_ACCESSOR, ValidationErrors, Validators } from '@angular/forms';
 import { LoadingService } from '../services/loading.service';
 import { WorkoutSectionDto } from '../proxy/workout-sections';
 import {
@@ -14,6 +14,8 @@ import {
 } from '@angular/cdk/drag-drop';
 import { NgbAccordionItem } from '@ng-bootstrap/ng-bootstrap';
 import { SetQuantityType, SetUnitType } from '../proxy/sets';
+import { ExerciseDto, ExerciseService } from '../proxy/exercises';
+import { SelectDropDownModule } from 'ngx-select-dropdown';
 
 const origCollapse = NgbAccordionItem.prototype['collapse'];
 const origExpand = NgbAccordionItem.prototype['expand'];
@@ -29,6 +31,47 @@ NgbAccordionItem.prototype['expand'] = function () {
   // return origCollapse.apply(this, arguments);
 };
 
+@Component({
+  selector: 'app-exercise-dropdown',
+  template: `
+    <ngx-select-dropdown
+      [config]="config"
+      [options]="options"
+      [multiple]="false"
+      (change)="onChange($event)">
+    </ngx-select-dropdown>
+  `,
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => ExerciseDropdownComponent),
+    multi: true
+  }],
+  standalone: false
+})
+export class ExerciseDropdownComponent implements ControlValueAccessor {
+  @Input() options: any[] = [];
+  @Input() config: any = {};
+  private onChangeFn: any = () => {};
+  private onTouchedFn: any = () => {};
+
+  onChange(event: any) {
+    this.onChangeFn(event.value);
+  }
+
+  writeValue(value: any): void {
+    // optional: set value on ngx-select-dropdown if needed
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChangeFn = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouchedFn = fn;
+  }
+}
+
+
 
 @Component({
   standalone: false,
@@ -41,29 +84,68 @@ export class WorkoutComponent implements OnInit {
   // Expose public version of enum for comparison in html
   public SetQuantityType = SetQuantityType;
 
-  workout = { items: [], totalCount: 0 } as PagedResultDto<WorkoutDto>;
+  workouts = { items: [], totalCount: 0 } as PagedResultDto<WorkoutDto>;
+  exercises = { items: [], totalCount: 0 } as PagedResultDto<ExerciseDto>;
+  // config = {
+  //   displayFn:(item: ExerciseDto) => { return item.title; },
+  //   placeholder: "Select an exercise",
+  //   search:true,
+  //   displayKey:"title"
+  // }
+
+  config = {
+    displayKey: "title",       // key in ExerciseDto to show in dropdown
+    search: true,             // enable search box
+    height: '200px',
+    placeholder: 'Select exercises',
+    customComparator: undefined,
+    limitTo: 20,   // show page size worth of items
+    moreText: 'more',
+    noResultsFound: 'No exercises found!',
+    clearOnSelection: false,
+    searchOnKey: 'title'
+  };
+  dropdownOptions: ExerciseDto[] = [];
+  dataModel: ExerciseDto;
+  page = 1;
+  pageSize = 20;
+  totalCount = 0;
+
 
   selectedWorkout = {} as WorkoutDto; // declare selectedWorkout
 
   form: FormGroup;
   sectionsForm: FormGroup;
-  setForm: FormGroup; 
+  setForm: FormGroup;
+  exerciseForm: FormGroup; 
   
   isModalOpen = false;
 
   constructor(public readonly list: ListService,
     private workoutService: WorkoutService,
+    private exerciseService: ExerciseService,
     private fb: FormBuilder,
     private confirmation: ConfirmationService,
     private loading: LoadingService) {}
 
   ngOnInit() {
     const workoutStreamCreator = (query) => this.workoutService.getList(query);
-    // const exerciseStreamCreator = (query) => this.workoutService.getList(query);
+    const exerciseStreamCreator = (query) => this.exerciseService.getList(query);
 
     this.list.hookToQuery(workoutStreamCreator).subscribe((response) => {
-      this.workout = response;
+      this.workouts = response;
     });
+
+    this.list.hookToQuery(exerciseStreamCreator).subscribe((response) => {
+      this.exercises = response;
+      this.dropdownOptions = response.items;
+      this.totalCount = response.totalCount;
+    });
+  }
+
+
+  selectionChanged(event: any) {
+    console.log('Selected exercises:', event.value);
   }
 
   buildForm() {
@@ -81,6 +163,13 @@ export class WorkoutComponent implements OnInit {
       quantity: [ '', Validators.required ],
       quantityType: [ SetQuantityType.Time, Validators.required ],
       rest: [ null ]
+    });
+    this.exerciseForm = this.fb.group({
+        name: ['Select an Exercise', Validators.required],
+        exerciseId: ['', Validators.required],
+        exerciseDto: [null, Validators.required],
+        sets: this.fb.array([]),
+        workoutSectionId: ''
     });
   }
 
@@ -190,8 +279,9 @@ export class WorkoutComponent implements OnInit {
   addExercise(sectionIndex: number) {
     this.getExercises(sectionIndex).push(
     this.fb.group({
-        name: ['Exercise' + this.getExercises(sectionIndex).length, Validators.required],
-        exerciseId: ['xyz', Validators.required],
+        name: ['Select an Exercise', Validators.required],
+        exerciseId: ['', Validators.required],
+        exerciseDto: [null, Validators.required],
         sets: this.fb.array([]),
         workoutSectionId: this.workoutSections.at(sectionIndex).get('id')
     })

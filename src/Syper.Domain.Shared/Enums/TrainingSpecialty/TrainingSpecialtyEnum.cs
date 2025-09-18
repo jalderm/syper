@@ -1,6 +1,6 @@
 ﻿namespace Syper.TrainingSpecialty;
 
-public enum TrainingSpecialtyEnum
+public enum TrainingSpecialty
 {
     Running = 0,
     Strength = 1

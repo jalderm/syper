@@ -31,5 +31,12 @@ function configureRoutes() {
         layout: eLayoutType.application,
         requiredPolicy: 'Syper.Workouts',
       },
+      {
+        path: '/training-plans',
+        name: '::Menu:TrainingPlans',
+        iconClass: 'fas fa-clipboard-list',
+        layout: eLayoutType.application,
+        requiredPolicy: 'Syper.TrainingPlans',
+      },
   ]);
 }

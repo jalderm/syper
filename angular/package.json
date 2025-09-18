@@ -35,6 +35,7 @@
     "@babel/runtime": "^7.28.3",
     "@ng-bootstrap/ng-bootstrap": "^18.0.0",
     "@tailwindcss/postcss": "^4.1.13",
+    "ngx-select-dropdown": "^3.3.2",
     "rxjs": "~7.8.0",
     "tailwindcss": "^4.1.13",
     "tslib": "^2.0.0",

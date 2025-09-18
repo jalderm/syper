@@ -6,10 +6,10 @@ using Syper.ClientStateEnum;
 using Syper.WorkoutExercises;
 using Syper.ExerciseCategories;
 
-namespace Syper.Workouts;
+namespace Syper.Exercises;
 
 public class ExerciseDto : AuditedEntityDto<Guid>
 {
     public required string Title { get; set; }
-    public required ExerciseCategory ExerciseCategory { get; set; } = ExerciseCategory.Distance;
+    public required ExerciseCategoryEnum ExerciseCategory { get; set; } = ExerciseCategoryEnum.Distance;
 }

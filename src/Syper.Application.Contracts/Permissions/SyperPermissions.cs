@@ -21,4 +21,20 @@ public static class SyperPermissions
         public const string Edit = Default + ".Edit";
         public const string Delete = Default + ".Delete";
     }
+
+    public static class Exercises
+    {
+        public const string Default = GroupName + ".Exercises";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+    }
+
+    public static class TrainingPlans
+    {
+        public const string Default = GroupName + ".TrainingPlans";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+    }
 }

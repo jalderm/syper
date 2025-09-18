@@ -1,6 +1,6 @@
 namespace Syper.ExerciseCategories;
 
-public enum ExerciseCategory
+public enum ExerciseCategoryEnum
 {
     Distance = 0,
     Weight = 1,

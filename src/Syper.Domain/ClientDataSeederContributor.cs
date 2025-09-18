@@ -29,11 +29,6 @@ public class SyperDataSeederContributor
     {
         if (await _clientRepository.GetCountAsync() <= 0)
         {
-            if (!context.TenantId.HasValue)
-            {
-                // Skip seeding for host
-                return;
-            }
             await _clientRepository.InsertAsync(
                 new Client("John", "Doe", "john.doe@gmail.com", ClientState.Active),
                 autoSave: true
@@ -47,11 +42,11 @@ public class SyperDataSeederContributor
         if (await _exerciseRepository.GetCountAsync() <= 0)
         {
             await _exerciseRepository.InsertAsync(
-                new Exercise("Run (Distance)", ExerciseCategory.Distance),
+                new Exercise("Run (Distance)", ExerciseCategoryEnum.Distance),
                 autoSave: true
             );
             await _exerciseRepository.InsertAsync(
-                new Exercise("Run (Time)", ExerciseCategory.Time),
+                new Exercise("Run (Time)", ExerciseCategoryEnum.Time),
                 autoSave: true
             );
         }

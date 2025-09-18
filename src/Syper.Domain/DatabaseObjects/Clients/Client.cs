@@ -7,7 +7,7 @@ using Syper.MultiTenancy;
 
 namespace Syper.Clients
 {
-    public class Client : MultiTenantFullAuditedAggregateRoot<Guid>
+    public class Client : FullAuditedAggregateRoot<Guid>
     {
 
         [MaxLength(32)]

@@ -18,7 +18,7 @@
     </div>
   </div>
   <div class="card-body">
-    <ngx-datatable [rows]="workout.items" [count]="workout.totalCount" [list]="list" default>
+    <ngx-datatable [rows]="workouts.items" [count]="workouts.totalCount" [list]="list" default>
       <ngx-datatable-column [name]="'::Name' | abpLocalization" prop="firstName"></ngx-datatable-column>
       <ngx-datatable-column [name]="'::Exercises' | abpLocalization">
         <ng-template let-row="row" ngx-datatable-cell-template>
@@ -107,13 +107,27 @@
               (cdkDropListDropped)="drop($event, i)"
               class="workoutList mb-2">
               
-              <div class="card"  *ngFor="let exercise of getExercises(i).controls; let j = index" [formGroup]="exercise" cdkDrag>
+              <div class="card"  *ngFor="let exercise of getExercises(i).controls; let j = index" [formGroup]="exerciseForm" cdkDrag>
                 <div class="row">
                   <div class="card-header">
                     <div class="row">
                       <div class="col-8">
                         <h6 class="card-title">
-                          {{ exercise.controls.name.value }}
+                          <!-- <ngx-select-dropdown
+                            [instanceId]="'instance1'"
+                            [multiple]="false"
+                            [(ngModel)]="exerciseForm.value.exerciseDto"
+                            [config]="config"
+                            [options]="dropdownOptions"
+                            (change)="selectionChanged($event)">
+                          </ngx-select-dropdown> -->
+
+                          <app-exercise-dropdown
+                            formControlName="exerciseDto"
+                            [options]="dropdownOptions"
+                            [config]="config">
+                          </app-exercise-dropdown>
+
                         </h6>
                       </div>
                       <div class="text-end col-4" cdkDragHandle>
@@ -158,11 +172,6 @@
                   <button type="button" class="btn btn-sm btn-outline-primary mb-2" (click)="addSet(i, j)">
                     + Add Set
                   </button>
-                  <!-- <div>
-                    <button type="button" class="btn btn-sm btn-danger mt-2" (click)="removeExercise(i, j)">
-                      - Remove Exercise
-                    </button>
-                  </div> -->
                 </div>
               </div>
               <div *ngIf="getExercises(i).controls.length == 0" class="m-2">
