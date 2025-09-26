@@ -1,6 +1,6 @@
 import { ListService, PagedResultDto } from '@abp/ng.core';
-import { ChangeDetectorRef, Component, forwardRef, Input, NgModule, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { WorkoutDto, WorkoutService } from '../proxy/workouts';
+import { ChangeDetectorRef, Component, forwardRef, Input, NgModule, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
+import { CreateUpdateWorkoutDto, WorkoutDto, WorkoutService } from '../proxy/workouts';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
 import { AbstractControl, ControlValueAccessor, FormArray, FormBuilder, FormGroup, NG_VALUE_ACCESSOR, ValidationErrors, Validators } from '@angular/forms';
 import { LoadingService } from '../services/loading.service';
@@ -16,6 +16,10 @@ import { NgbAccordionItem } from '@ng-bootstrap/ng-bootstrap';
 import { SetQuantityType, SetUnitType } from '../proxy/sets';
 import { ExerciseDto, ExerciseService } from '../proxy/exercises';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
+import { EventEmitter } from '@angular/core';
+import { WorkoutExerciseDto } from '../proxy/workout-exercises';
+import { WorkoutExercises } from '../proxy';
+
 
 const origCollapse = NgbAccordionItem.prototype['collapse'];
 const origExpand = NgbAccordionItem.prototype['expand'];
@@ -35,10 +39,12 @@ NgbAccordionItem.prototype['expand'] = function () {
   selector: 'app-exercise-dropdown',
   template: `
     <ngx-select-dropdown
-      [config]="config"
-      [options]="options"
-      [multiple]="false"
-      (change)="onChange($event)">
+    [options]="options"
+  [config]="config"
+  [ngModel]="value"
+  (ngModelChange)="onChange($event)"
+  
+      [multiple]="false">
     </ngx-select-dropdown>
   `,
   providers: [{
@@ -47,27 +53,40 @@ NgbAccordionItem.prototype['expand'] = function () {
     multi: true
   }],
   standalone: false
+  
 })
 export class ExerciseDropdownComponent implements ControlValueAccessor {
   @Input() options: any[] = [];
   @Input() config: any = {};
-  private onChangeFn: any = () => {};
+  @Output() selectionChange = new EventEmitter<any>();
+
+  private onChangeFn: any = () => {};   // ✅ placeholder callbacks
   private onTouchedFn: any = () => {};
+  value: any;
 
   onChange(event: any) {
-    this.onChangeFn(event.value);
+    this.value = event;
+
+    // ✅ notify Angular forms
+    this.onChangeFn(event);
+    // ✅ notify parent component if they listen to (selectionChange)
+    this.selectionChange.emit(event);
   }
 
   writeValue(value: any): void {
-    // optional: set value on ngx-select-dropdown if needed
+    this.value = value;
   }
 
   registerOnChange(fn: any): void {
-    this.onChangeFn = fn;
+    this.onChangeFn = fn;   // ✅ assign callback from Angular forms
   }
 
   registerOnTouched(fn: any): void {
     this.onTouchedFn = fn;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+    // optional support for disabled state
   }
 }
 
@@ -112,7 +131,7 @@ export class WorkoutComponent implements OnInit {
   totalCount = 0;
 
 
-  selectedWorkout = {} as WorkoutDto; // declare selectedWorkout
+  selectedWorkout = {} as CreateUpdateWorkoutDto | WorkoutDto; // declare selectedWorkout
 
   form: FormGroup;
   sectionsForm: FormGroup;
@@ -143,33 +162,64 @@ export class WorkoutComponent implements OnInit {
     });
   }
 
-
-  selectionChanged(event: any) {
-    console.log('Selected exercises:', event.value);
+  getExerciseCount(row) {
+    console.log(row);
   }
 
   buildForm() {
     this.form = this.fb.group({
       name: [this.selectedWorkout.name || '', Validators.required],
-      workoutSections: this.fb.array([], this.workoutSectionsConstraint()), 
+      workoutSections: this.fb.array(
+        this.selectedWorkout?.workoutSections?.map(section => this.buildSection(section)) || []
+      ), 
     });
-    this.sectionsForm = this.fb.group({
-      title: [ '', Validators.required ],
-      sections: this.fb.array([]),
+
+    // this.sectionsForm = this.fb.group({
+    //   title: [ '', Validators.required ],
+    //   sections: this.fb.array([]),
+    // });
+    // this.exerciseForm = this.fb.group({
+    //     name: ['Select an Exercise', Validators.required],
+    //     exerciseId: ['', Validators.required],
+    //     exerciseDto: [null, Validators.required],
+    //     sets: this.fb.array([]),
+    //     workoutSectionId: "00000000-0000-0000-0000-000000000000"
+    // });
+    // this.setForm = this.fb.group({
+    //   unit: [ null, Validators.required ],
+    //   unitType: [ SetUnitType.Distance, Validators.required ],
+    //   quantity: [ '', Validators.required ],
+    //   quantityType: [ SetQuantityType.Time, Validators.required ],
+    //   rest: [ null ]
+    // });
+  }
+
+  buildSection(section: WorkoutSectionDto): FormGroup {
+    return this.fb.group({
+      title: [section.title || '', Validators.required],
+      colour: [section.colour || '#cccccc'],
+      workoutExercises: this.fb.array(section.workoutExercises?.map(exercise => this.buildExercise(exercise)) || []),
+      workoutId: [section.workoutId || "00000000-0000-0000-0000-000000000000"]
     });
-    this.setForm = this.fb.group({
-      unit: [ 0, Validators.required ],
-      unitType: [ SetUnitType.Distance, Validators.required ],
-      quantity: [ '', Validators.required ],
-      quantityType: [ SetQuantityType.Time, Validators.required ],
-      rest: [ null ]
+  }
+
+  buildExercise(exercise: WorkoutExerciseDto): FormGroup {
+    return this.fb.group({
+        name: [exercise?.exercise?.title || 'Select an Exercise', Validators.required],
+        exerciseId: [exercise?.exerciseId || '', Validators.required],
+        exerciseDto: [exercise?.exercise || null, Validators.required],
+        sets: this.fb.array(exercise?.sets?.map(set => this.buildSet(set)) || []),
+        workoutSectionId: exercise?.workoutSectionId || "00000000-0000-0000-0000-000000000000"
     });
-    this.exerciseForm = this.fb.group({
-        name: ['Select an Exercise', Validators.required],
-        exerciseId: ['', Validators.required],
-        exerciseDto: [null, Validators.required],
-        sets: this.fb.array([]),
-        workoutSectionId: ''
+  }
+
+  buildSet(set): FormGroup {
+    return this.fb.group({
+      unit: [set?.unit || null, Validators.required],
+      unitType: [set?.unitType || SetUnitType.Distance, Validators.required],
+      quantity: [set?.quantity || '', Validators.required],
+      quantityType: [set?.quantityType || SetQuantityType.Time, Validators.required],
+      rest: [set?.rest || null]
     });
   }
 
@@ -208,15 +258,17 @@ export class WorkoutComponent implements OnInit {
   }
 
   createWorkout() {
-    this.selectedWorkout = {} as WorkoutDto; // reset the selected Workout
+    this.selectedWorkout = {} as CreateUpdateWorkoutDto | WorkoutDto; // reset the selected Workout
     this.buildForm();
     this.isModalOpen = true;
   }
 
   editWorkout(id: string) {
     this.loading.setLoading(true);
-    this.workoutService.get(id).subscribe((Workout) => {
-      this.selectedWorkout = Workout;
+    this.workoutService.get(id).subscribe((workout: WorkoutDto) => {
+      this.selectedWorkout = workout;
+      this.selectedWorkout.id = id;
+      this.normaliseSets(this.selectedWorkout, true);
       this.buildForm();
       this.isModalOpen = true;
       this.loading.setLoading(false);
@@ -234,6 +286,21 @@ export class WorkoutComponent implements OnInit {
     });
   }
 
+  selectionExerciseChanged(event: any, sectionIndex: number, exerciseIndex: number) {
+    if (event == null || event.length === 0) {
+      return;
+    }
+    const control = this.form.get('workoutSections').get(sectionIndex.toString()).get('workoutExercises').get(exerciseIndex.toString());
+    control.setValue({
+        name: event.title,
+        exerciseId: event.id,
+        exerciseDto: event,
+        sets: this.fb.array([]),
+        workoutSectionId: this.form.get('workoutSections').get('id')?.value ?? "00000000-0000-0000-0000-000000000000"
+    });
+  }
+
+
   onSpace(event: KeyboardEvent) {
     event.stopPropagation();      // prevent accordion toggle
     event.preventDefault();       // prevent scrolling
@@ -244,46 +311,43 @@ export class WorkoutComponent implements OnInit {
     const end = input.selectionEnd || 0;
     input.value = input.value.slice(0, start) + ' ' + input.value.slice(end);
     input.setSelectionRange(start + 1, start + 1);
-
-    // If using reactive forms, update the FormControl value
-    const control = this.form.get('workoutSections').get((input as any).dataset.index.toString()).get('title');
-    control?.setValue(input.value, { emitEvent: false });
   }
 
 
   // Workout Builder Itself
-  get workoutSections(): FormArray {
+  workoutSections(): FormArray {
     return this.form.get('workoutSections') as FormArray;
   }
 
   addSection() {
-    this.workoutSections.push(
+    this.workoutSections().push(
       this.fb.group({
         title: ['', Validators.required],
         colour: ['#cccccc'],
         workoutExercises: this.fb.array([]),
-        workoutId: null
+        workoutId: "00000000-0000-0000-0000-000000000000"
       })
     );
   }
 
   removeSection(i: number) {
-    this.workoutSections.removeAt(i);
+    this.workoutSections().removeAt(i);
   }
 
 
   getExercises(sectionIndex: number): FormArray {
-    return this.workoutSections.at(sectionIndex).get('workoutExercises') as FormArray;
+    return this.workoutSections().at(sectionIndex).get('workoutExercises') as FormArray;
   }
 
   addExercise(sectionIndex: number) {
+    console.log(this.getExercises(sectionIndex));
     this.getExercises(sectionIndex).push(
     this.fb.group({
         name: ['Select an Exercise', Validators.required],
         exerciseId: ['', Validators.required],
         exerciseDto: [null, Validators.required],
         sets: this.fb.array([]),
-        workoutSectionId: this.workoutSections.at(sectionIndex).get('id')
+        workoutSectionId: this.workoutSections().at(sectionIndex).get('id') ?? "00000000-0000-0000-0000-000000000000"
     })
   );
   }
@@ -299,11 +363,11 @@ export class WorkoutComponent implements OnInit {
   addSet(sectionIndex: number, exerciseIndex: number) {
     this.getSets(sectionIndex, exerciseIndex).push(
       this.fb.group({
-        unit: [0, Validators.required],
+        unit: [null, Validators.required],
         unitType: [SetUnitType.Distance, Validators.required],
         quantity: ['', Validators.required],
         quantityType: [SetQuantityType.Time, Validators.required],
-        rest: [''],
+        rest: [null],
       })
     );
   }
@@ -312,12 +376,76 @@ export class WorkoutComponent implements OnInit {
     this.getSets(sectionIndex, exerciseIndex).removeAt(setIndex);
   }
 
+  normaliseSets(w, denormalise: boolean = false) {
+    w.workoutSections.forEach(ws => {
+      ws.workoutExercises.forEach(we => {
+        we.sets.forEach(s => {
+          if (denormalise) {
+            switch (s.quantityType) {
+              case SetQuantityType.Time:
+              case SetQuantityType.Distance:
+                if (typeof s.quantity === 'number') {
+                  var quantityTimes: string[] = [];
+                  quantityTimes[0] = Math.floor(s.quantity/3600).toString().padStart(2,'0');
+                  var mins = Math.floor((s.quantity%3600)/60);
+                  quantityTimes[1] = mins.toString().padStart(2,'0');
+                  quantityTimes[2] = Math.floor(s.quantity%60).toString().padStart(2,'0');
+                  s.quantity = quantityTimes.join(':');
+                }
+              case SetQuantityType.Reps:
+              default:
+                s.quantity = `${s.quantity}`;
+            }
+            s.unit = `${s.unit}`;
+          }
+          else {
+            switch (s.quantityType) {
+              case SetQuantityType.Time:
+              case SetQuantityType.Distance:
+                if (typeof s.quantity === 'string') {
+                  var quantityTimes: string[] = (s.quantity as string).split(':');
+                  var totalTime = +quantityTimes[0];
+                  totalTime *= 60;
+                  totalTime += +quantityTimes[1];
+                  totalTime *= 60;
+                  totalTime += +quantityTimes[2];
+                  s.quantity = totalTime;
+                }
+              case SetQuantityType.Reps:
+              default:
+                s.quantity = +s.quantity;
+            }
+            s.unit = +s.unit;
+          }
+          
+        })
+      })
+    })
+  }
+
   save() {
+    console.log("starting save");
     if (this.form.invalid) {
       return;
     }
+
+    console.log(this.form.value);
+
+    var w = this.form.value;
     
-    console.log(this.selectedWorkout);
+    this.normaliseSets(w);
+
+    console.log(w);
+
+    const request = this.selectedWorkout.id
+      ? this.workoutService.update(this.selectedWorkout.id, w)
+      : this.workoutService.create(w);
+
+    request.subscribe(() => {
+      this.isModalOpen = false;
+      this.form.reset();
+      this.list.get();
+    });
   }
 
 

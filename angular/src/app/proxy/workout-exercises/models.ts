@@ -1,8 +1,16 @@
 import type { AuditedEntityDto } from '@abp/ng.core';
 import type { SetDto } from '../sets/models';
+import type { ExerciseDto } from '../exercises/models';
+
+export interface CreateUpdateWorkoutExerciseDto extends AuditedEntityDto<string> {
+  exerciseId: string;
+  workoutSectionId: string;
+  sets: SetDto[];
+}
 
 export interface WorkoutExerciseDto extends AuditedEntityDto<string> {
   exerciseId: string;
+  exercise: ExerciseDto;
   workoutSectionId: string;
   sets: SetDto[];
 }

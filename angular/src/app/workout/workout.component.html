@@ -19,13 +19,7 @@
   </div>
   <div class="card-body">
     <ngx-datatable [rows]="workouts.items" [count]="workouts.totalCount" [list]="list" default>
-      <ngx-datatable-column [name]="'::Name' | abpLocalization" prop="firstName"></ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Exercises' | abpLocalization">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-                {{ row.workoutExercises?.length || 0 }}
-            </ng-template>
-        </ngx-datatable-column>
-      
+      <ngx-datatable-column [name]="'::Name' | abpLocalization" prop="name"></ngx-datatable-column>
       
       <ngx-datatable-column
         [name]="'::Actions' | abpLocalization"
@@ -43,7 +37,7 @@
               <i class="fa fa-cog me-1"></i>{{ '::Actions' | abpLocalization }}
             </button>
             <div ngbDropdownMenu>
-              <button *abpPermission="'Syper.Clients.Edit'" ngbDropdownItem (click)="editClient(row.id)">
+              <button *abpPermission="'Syper.Clients.Edit'" ngbDropdownItem (click)="editWorkout(row.id)">
                 {{ '::Edit' | abpLocalization }}
               </button>
               <button *abpPermission="'Syper.Clients.Delete'" ngbDropdownItem (click)="delete(row.id)">
@@ -53,17 +47,6 @@
           </div>
         </ng-template>
       </ngx-datatable-column>
-      
-      <!-- <ngx-datatable-column [name]="'::PublishDate' | abpLocalization" prop="publishDate">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          {{ row.publishDate | date }}
-        </ng-template>
-      </ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Price' | abpLocalization" prop="price">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          {{ row.price | currency }}
-        </ng-template>
-      </ngx-datatable-column> -->
     </ngx-datatable>
   </div>
 </div>
@@ -82,113 +65,128 @@
       </div>
 
       <div ngbAccordion class="mt-3" [animation]="false">
-        <div *ngFor="let section of workoutSections.controls; let i = index" ngbAccordionItem [formGroup]="sectionsForm">
-          <h2 ngbAccordionHeader>
-            <button class="btn btn-outline-secondary me-2" type="button" ngbAccordionButton>
-              <input 
-                type="text"
-                class="form-control d-inline-block mr-0_5"
-                placeholder="Section Title"
-                formControlName="title" 
-                (click)="$event.stopPropagation(); $event.preventDefault();"
-                (keydown.space)="onSpace($event)" />
-              <button id="deleteSection" class="btn btn-danger mr-0_5" type="button" (click)="removeSection(i)">
-                <i class="fas fa-trash"></i>
+        <div formArrayName="workoutSections">
+          <div *ngFor="let section of workoutSections().controls; let i = index" [formGroupName]="i" ngbAccordionItem>
+            <h2 ngbAccordionHeader>
+              <button class="btn btn-outline-secondary me-2" type="button" ngbAccordionButton>
+                <input 
+                  type="text"
+                  class="form-control d-inline-block mr-0_5"
+                  formControlName="title"
+                  placeholder="Section Title"
+                  (input)="section.get('title').setValue($event.target.value)"
+                  (click)="$event.stopPropagation(); $event.preventDefault();"
+                  (keydown.space)="onSpace($event)" />
+                <button id="deleteSection" class="btn btn-danger mr-0_5" type="button" (click)="removeSection(i)">
+                  <i class="fas fa-trash"></i>
+                </button>
               </button>
-            </button>
-          </h2>
+            </h2>
 
-          <div ngbAccordionBody>
-            <div 
-              cdkDropList
-              #dropList="cdkDropList"
-              [cdkDropListData]="getExercises(i).controls"
-              [cdkDropListConnectedTo]="connectedDropLists(i)"
-              (cdkDropListDropped)="drop($event, i)"
-              class="workoutList mb-2">
-              
-              <div class="card"  *ngFor="let exercise of getExercises(i).controls; let j = index" [formGroup]="exerciseForm" cdkDrag>
-                <div class="row">
-                  <div class="card-header">
+            <div ngbAccordionBody>
+              <div formArrayName="workoutExercises">
+                <div cdkDropList
+                  #dropList="cdkDropList"
+                  [cdkDropListData]="getExercises(i).controls"
+                  [cdkDropListConnectedTo]="connectedDropLists(i)"
+                  (cdkDropListDropped)="drop($event, i)"
+                  class="workoutList mb-2">
+                  
+                  <div class="card"  *ngFor="let exercise of getExercises(i).controls; let j = index" [formGroupName]="j" cdkDrag>
                     <div class="row">
-                      <div class="col-8">
-                        <h6 class="card-title">
-                          <!-- <ngx-select-dropdown
-                            [instanceId]="'instance1'"
-                            [multiple]="false"
-                            [(ngModel)]="exerciseForm.value.exerciseDto"
-                            [config]="config"
-                            [options]="dropdownOptions"
-                            (change)="selectionChanged($event)">
-                          </ngx-select-dropdown> -->
-
-                          <app-exercise-dropdown
-                            formControlName="exerciseDto"
-                            [options]="dropdownOptions"
-                            [config]="config">
-                          </app-exercise-dropdown>
-
-                        </h6>
-                      </div>
-                      <div class="text-end col-4" cdkDragHandle>
-                        <div class="text-lg-end pad-children-1">
-                          <button id="deleteExercise" class="btn btn-danger mr-0_5" type="button" (click)="removeExercise(i, j)">
-                            <i class="fas fa-trash"></i>
-                          </button>
-                          <button id="move" class="btn btn-outline-primary" type="button">
-                            <i class="fas fa-bars"></i>
-                          </button>
+                      <div class="card-header">
+                        <div class="row">
+                          <div class="col-8">
+                            <h6 class="card-title">
+                              <app-exercise-dropdown
+                                formControlName="exerciseDto"
+                                [options]="dropdownOptions"
+                                [value]="exercise?.value?.exerciseDto"
+                                [config]="config"
+                                (selectionChange)="selectionExerciseChanged($event, i, j)">
+                              </app-exercise-dropdown>
+                            </h6>
+                          </div>
+                          <div class="text-end col-4" cdkDragHandle>
+                            <div class="text-lg-end pad-children-1">
+                              <button id="deleteExercise" class="btn btn-danger mr-0_5" type="button" (click)="removeExercise(i, j)">
+                                <i class="fas fa-trash"></i>
+                              </button>
+                              <button id="move" class="btn btn-outline-primary" type="button">
+                                <i class="fas fa-bars"></i>
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
 
-                <div class="card-body" style="padding: 0.75rem !important">
-                  <div *ngFor="let set of getSets(i,j).controls; let k = index" [formGroup]="setForm" class="row g-2 align-items-end mb-1">
-                    <div class="col">
-                      <label *ngIf="k==0">
-                        {{  getUnitTitle(set.controls.unitType.value) }}
-                      </label>
-                      <input type="number" class="form-control" formControlName="unit" />
-                    </div>
-                    <div class="col">
-                      <label *ngIf="k==0">
-                        {{  getQuantityTitle(set.controls.quantityType.value) }}
-                      </label>
-                      <input *ngIf="set.controls.quantityType.value == SetQuantityType.Time" type="text" class="form-control" pattern="[0-5][0-9]:[0-5][0-9]:[0-5][0-9]" placeholder="HH:MM:SS" formControlName="quantity" />
-                      <input *ngIf="set.controls.quantityType.value != SetQuantityType.Time" type="number" class="form-control" formControlName="quantity" />
-                    </div>
-                    <div class="col">
-                      <label *ngIf="k==0">Rest (optional)</label>
-                      <input type="text" class="form-control" pattern="[0-5][0-9]:[0-5][0-9]" placeholder="MM:SS" formControlName="rest">
-                    </div>
-                    <div class="col-auto">
-                      <button type="button" class="btn btn-sm btn-danger mt-1 mb-1" (click)="removeSet(i,j,k)">
-                        <i class="fas fa-trash"></i>
+                    <div class="card-body" style="padding: 0.75rem !important" formArrayName="sets">
+                      <div *ngFor="let set of getSets(i,j).controls; let k = index" class="row g-2 align-items-end mb-1" [formGroupName]="k">
+                        <div class="col">
+                          <label *ngIf="k==0">
+                            {{  getUnitTitle(set.controls.unitType.value) }}
+                          </label>
+                          <input 
+                            type="number"
+                            class="form-control"
+                            formControlName="unit"
+                            placeholder="0"
+                            (input)="+set.get('unit').setValue($event.target.value)"
+                          />
+                        </div>
+                        <div class="col">
+                          <label *ngIf="k==0">
+                            {{  getQuantityTitle(set.controls.quantityType.value) }}
+                          </label>
+                          <input 
+                            *ngIf="set.controls.quantityType.value == SetQuantityType.Time"
+                            type="text"
+                            class="form-control"
+                            pattern="[0-5][0-9]:[0-5][0-9]:[0-5][0-9]"
+                            placeholder="HH:MM:SS"
+                            formControlName="quantity"
+                            (input)="set.get('quantity').setValue($event.target.value)" />
+                          <input 
+                            *ngIf="set.controls.quantityType.value != SetQuantityType.Time"
+                            type="number"
+                            class="form-control"
+                            formControlName="quantity"
+                            (input)="set.get('quantity').setValue($event.target.value)" />
+                        </div>
+                        <div class="col">
+                          <label *ngIf="k==0">Rest (optional)</label>
+                          <input 
+                            type="text"
+                            class="form-control"
+                            pattern="[0-5][0-9]:[0-5][0-9]"
+                            placeholder="MM:SS"
+                            formControlName="rest"
+                            (input)="set.get('rest').setValue($event.target.value)">
+                        </div>
+                        <div class="col-auto">
+                          <button type="button" class="btn btn-sm btn-danger mt-1 mb-1" (click)="removeSet(i,j,k)">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <button type="button" class="btn btn-sm btn-outline-primary mb-2" (click)="addSet(i, j)">
+                        + Add Set
                       </button>
                     </div>
                   </div>
-                  <button type="button" class="btn btn-sm btn-outline-primary mb-2" (click)="addSet(i, j)">
-                    + Add Set
-                  </button>
+                  <div *ngIf="getExercises(i).controls.length == 0" class="m-2">
+                    <h6>No exercises yet.</h6>
+                  </div>
                 </div>
               </div>
-              <div *ngIf="getExercises(i).controls.length == 0" class="m-2">
-                <h6>No exercises yet.</h6>
-              </div>
-            </div>
-            <button type="button" class="btn btn-sm btn-secondary mb-2" (click)="addExercise(i)">
-              + Add Exercise
-            </button>
-            <!-- <div>
-              <button type="button" class="btn btn-sm btn-danger mt-2" (click)="removeSection(i)">
-                Remove Section
+              
+              <button type="button" class="btn btn-sm btn-secondary mb-2" (click)="addExercise(i)">
+                + Add Exercise
               </button>
-            </div> -->
+            </div>
           </div>
         </div>
-
       </div>
 
       <div class="mt-3">
@@ -196,29 +194,6 @@
           + Add Section
         </button>
       </div>
-
-
-
-          <!-- <ngb-panel *ngFor="let section of workoutSections.controls; let i = index" [title]="'Section ' + (i+1)">
-            <ng-template ngbPanelContent>
-              <div [formGroup]="section">
-                <div class="mb-2">
-                  <input type="text" class="form-control" placeholder="Section Title" formControlName="title" />
-                </div>
-                <div class="mb-2">
-                  <input type="color" class="form-control" formControlName="colour" />
-                </div>
-
-                <button type="button" class="btn btn-sm btn-secondary mb-2" (click)="addExercise(i)">
-                  + Add Exercise
-                </button>
-
-                <div *ngFor="let exercise of getExercises(i).controls; let j = index" [formGroup]="exercise" class="card mb-2">
-                  
-                </div>
-              </div>
-            </ng-template>
-          </ngb-panel> -->
     </form>
   </ng-template>
 
@@ -229,7 +204,8 @@
     </button>
 
     <!--added save button-->
-    <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
+    <button class="btn btn-primary" (click)="save()">
+      <!-- <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid"> -->
       <i class="fa fa-check mr-1"></i>
       {{ '::Save' | abpLocalization }}
     </button>

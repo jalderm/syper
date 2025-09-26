@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Syper.Domain\Syper.Domain.csproj" />
     <ProjectReference Include="..\Syper.Application.Contracts\Syper.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Syper.EntityFrameworkCore\Syper.EntityFrameworkCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -26,10 +26,10 @@ public class SyperPermissionDefinitionProvider : PermissionDefinitionProvider
         exercisesPermission.AddChild(SyperPermissions.Exercises.Edit, L("Permission:exercises.Edit"));
         exercisesPermission.AddChild(SyperPermissions.Exercises.Delete, L("Permission:exercises.Delete")); 
         
-        var exercisesPermission = myGroup.AddPermission(SyperPermissions.Exercises.Default, L("Permission:trainingPlans"));
-        exercisesPermission.AddChild(SyperPermissions.Exercises.Create, L("Permission:trainingPlans.Create"));
-        exercisesPermission.AddChild(SyperPermissions.Exercises.Edit, L("Permission:trainingPlans.Edit"));
-        exercisesPermission.AddChild(SyperPermissions.Exercises.Delete, L("Permission:trainingPlans.Delete")); 
+        // var exercisesPermission = myGroup.AddPermission(SyperPermissions.Exercises.Default, L("Permission:trainingPlans"));
+        // exercisesPermission.AddChild(SyperPermissions.Exercises.Create, L("Permission:trainingPlans.Create"));
+        // exercisesPermission.AddChild(SyperPermissions.Exercises.Edit, L("Permission:trainingPlans.Edit"));
+        // exercisesPermission.AddChild(SyperPermissions.Exercises.Delete, L("Permission:trainingPlans.Delete")); 
     }
 
     private static LocalizableString L(string name)

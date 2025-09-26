@@ -7,6 +7,7 @@ using Syper.Clients;
 using Syper.ClientStateEnum;
 using Syper.Exercises;
 using Syper.ExerciseCategories;
+using Syper.ClientCoachSubscriptions;
 
 namespace Syper;
 
@@ -15,14 +16,17 @@ public class SyperDataSeederContributor
 {
     private readonly IRepository<Client, Guid> _clientRepository;
     private readonly IRepository<Exercise, Guid> _exerciseRepository;
+    // private readonly IRepository<ClientCoachSubscription, Guid> _clientCoachSubscriptionRepository;
 
     public SyperDataSeederContributor(
         IRepository<Client, Guid> clientRepository,
         IRepository<Exercise, Guid> exerciseRepository
+        // IRepository<ClientCoachSubscription, Guid> clientCoachSubscriptionRepository
         )
     {
         _clientRepository = clientRepository;
         _exerciseRepository = exerciseRepository;
+        // _clientCoachSubscriptionRepository = clientCoachSubscriptionRepository;
     }
 
     public async Task SeedAsync(DataSeedContext context)
@@ -50,5 +54,21 @@ public class SyperDataSeederContributor
                 autoSave: true
             );
         }
+
+        // if (await _clientCoachSubscriptionRepository.GetCountAsync() <= 0)
+        // {
+        //     var client = await _clientRepository.FirstOrDefaultAsync();
+        //     if (client != null)
+        //     {
+        //         await _clientCoachSubscriptionRepository.InsertAsync(
+        //             new ClientCoachSubscription
+        //             {
+        //                 ClientId = client.Id,
+        //                 Client = client
+        //             },
+        //             autoSave: true
+        //         );
+        //     }
+        // }
     }
 }

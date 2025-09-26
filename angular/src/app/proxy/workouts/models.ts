@@ -1,11 +1,10 @@
-import type { WorkoutExerciseDto } from '../workout-exercises/models';
 import type { AuditedEntityDto } from '@abp/ng.core';
-import type { WorkoutSectionDto } from '../workout-sections/models';
+import type { CreateUpdateWorkoutSectionDto, WorkoutSectionDto } from '../workout-sections/models';
 
-export interface CreateUpdateWorkoutDto {
-  title: string;
-  authorId?: string;
-  workoutExercises: WorkoutExerciseDto[];
+export interface CreateUpdateWorkoutDto extends AuditedEntityDto<string> {
+  name: string;
+  workoutSections: CreateUpdateWorkoutSectionDto[];
+  shortDescription?: string;
 }
 
 export interface WorkoutDto extends AuditedEntityDto<string> {

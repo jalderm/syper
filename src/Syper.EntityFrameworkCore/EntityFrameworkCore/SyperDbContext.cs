@@ -23,6 +23,7 @@ using Syper.Workouts;
 using Syper.WorkoutSections;
 using Syper.WorkoutExercises;
 using Syper.Exercises;
+using Syper.ClientCoachSubscriptions;
 
 [ReplaceDbContext(typeof(IIdentityDbContext))]
 [ReplaceDbContext(typeof(ITenantManagementDbContext))]
@@ -37,6 +38,7 @@ public class SyperDbContext :
     public DbSet<Client> Clients { get; set; }
     public DbSet<Workout> Workouts { get; set; }
     public DbSet<Exercise> Exercises { get; set; }
+    public DbSet<ClientCoachSubscription> ClientCoachSubscription { get; set; }
 
     #region Entities from the modules
 
@@ -128,7 +130,7 @@ public class SyperDbContext :
                 SyperConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
             b.Property(x => x.Name).IsRequired().HasMaxLength(32);
-            b.Property(x => x.ShortDescription).IsRequired().HasMaxLength(255);
+            b.Property(x => x.ShortDescription).HasMaxLength(255);
             b.HasMany(x => x.WorkoutSections).WithOne().HasForeignKey(x => x.WorkoutId).IsRequired();
         });
 
@@ -143,7 +145,7 @@ public class SyperDbContext :
             b.HasOne(x => x.Workout).WithMany(x => x.WorkoutSections).HasForeignKey(x => x.WorkoutId).IsRequired();
             b.HasMany(x => x.WorkoutExercises).WithOne().HasForeignKey(x => x.WorkoutSectionId).IsRequired();
         });
-        
+
         builder.Entity<WorkoutExercise>(b =>
         {
             b.ToTable(SyperConsts.DbTablePrefix + "WorkoutExercises",
@@ -154,6 +156,16 @@ public class SyperDbContext :
             b.Property(x => x.ExerciseId).IsRequired();
             b.HasOne(x => x.Exercise).WithMany().HasForeignKey(x => x.ExerciseId).IsRequired();
             b.HasMany(x => x.Sets).WithOne().HasForeignKey(x => x.WorkoutExerciseId).IsRequired();
+        });
+        
+        builder.Entity<ClientCoachSubscription>(b =>
+        {
+            b.ToTable(SyperConsts.DbTablePrefix + "ClientCoachSubscriptions",
+                SyperConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.ClientId).IsRequired();
+            b.Property(x => x.TenantId).IsRequired();
+            b.HasIndex(x => new { x.ClientId, x.TenantId }).IsUnique();
         });
     }
 }

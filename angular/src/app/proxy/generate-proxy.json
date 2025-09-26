@@ -4853,7 +4853,7 @@
       "genericArguments": null,
       "properties": null
     },
-    "Syper.WorkoutExercises.WorkoutExerciseDto": {
+    "Syper.WorkoutExercises.CreateUpdateWorkoutExerciseDto": {
       "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
       "isEnum": false,
       "enumNames": null,
@@ -4898,15 +4898,72 @@
         }
       ]
     },
-    "Syper.Workouts.CreateUpdateWorkoutDto": {
-      "baseType": null,
+    "Syper.WorkoutExercises.WorkoutExerciseDto": {
+      "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
       "isEnum": false,
       "enumNames": null,
       "enumValues": null,
       "genericArguments": null,
       "properties": [
         {
-          "name": "Title",
+          "name": "ExerciseId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Exercise",
+          "jsonName": null,
+          "type": "Syper.Exercises.ExerciseDto",
+          "typeSimple": "Syper.Exercises.ExerciseDto",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "WorkoutSectionId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Sets",
+          "jsonName": null,
+          "type": "[Syper.Sets.SetDto]",
+          "typeSimple": "[Syper.Sets.SetDto]",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "Syper.Workouts.CreateUpdateWorkoutDto": {
+      "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Name",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
@@ -4918,11 +4975,11 @@
           "regex": null
         },
         {
-          "name": "AuthorId",
+          "name": "WorkoutSections",
           "jsonName": null,
-          "type": "System.Guid?",
-          "typeSimple": "string?",
-          "isRequired": false,
+          "type": "[Syper.WorkoutSections.CreateUpdateWorkoutSectionDto]",
+          "typeSimple": "[Syper.WorkoutSections.CreateUpdateWorkoutSectionDto]",
+          "isRequired": true,
           "minLength": null,
           "maxLength": null,
           "minimum": null,
@@ -4930,11 +4987,11 @@
           "regex": null
         },
         {
-          "name": "WorkoutExercises",
+          "name": "ShortDescription",
           "jsonName": null,
-          "type": "[Syper.WorkoutExercises.WorkoutExerciseDto]",
-          "typeSimple": "[Syper.WorkoutExercises.WorkoutExerciseDto]",
-          "isRequired": true,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
           "minLength": null,
           "maxLength": null,
           "minimum": null,
@@ -4980,6 +5037,63 @@
           "type": "System.String",
           "typeSimple": "string",
           "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "Syper.WorkoutSections.CreateUpdateWorkoutSectionDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Title",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Colour",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "WorkoutExercises",
+          "jsonName": null,
+          "type": "[Syper.WorkoutExercises.CreateUpdateWorkoutExerciseDto]",
+          "typeSimple": "[Syper.WorkoutExercises.CreateUpdateWorkoutExerciseDto]",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "WorkoutId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": true,
           "minLength": null,
           "maxLength": null,
           "minimum": null,

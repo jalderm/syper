@@ -8,23 +8,29 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using System.Linq.Dynamic.Core;
+using Syper.WorkoutRepository;
 
 namespace Syper.Workouts;
 
 [Authorize(SyperPermissions.Workouts.Default)]
 public class WorkoutAppService : ApplicationService, IWorkoutAppService
 {
-    private readonly IRepository<Workout, Guid> _repository;
+    private readonly IWorkoutRepository _repository;
 
-    public WorkoutAppService(IRepository<Workout, Guid> repository)
+    public WorkoutAppService(IWorkoutRepository repository)
     {
         _repository = repository;
     }
 
     public async Task<WorkoutDto> GetAsync(Guid id)
     {
-        var Workout = await _repository.GetAsync(id);
-        return ObjectMapper.Map<Workout, WorkoutDto>(Workout);
+        var workout = await _repository.GetWithSectionsAndExercisesAsync(id);
+        if (workout == null)
+        {
+            throw new Exception($"Workout with id {id} was not found.");
+        }
+
+        return ObjectMapper.Map<Workout, WorkoutDto>(workout);
     }
 
     public async Task<PagedResultDto<WorkoutDto>> GetListAsync(PagedAndSortedResultRequestDto input)

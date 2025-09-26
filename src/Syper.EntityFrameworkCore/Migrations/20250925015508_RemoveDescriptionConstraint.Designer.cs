@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Syper.EntityFrameworkCore;
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Syper.Migrations
 {
     [DbContext(typeof(SyperDbContext))]
-    partial class SyperDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250925015508_RemoveDescriptionConstraint")]
+    partial class RemoveDescriptionConstraint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2262,16 +2265,7 @@ namespace Syper.Migrations
                     b.ToTable("AbpTenantConnectionStrings", (string)null);
                 });
 
-            modelBuilder.Entity("Syper.ClientCoachSubscriptions.ClientCoachSubscription", b =>
-                {
-                    b.HasOne("Syper.Clients.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-                });
+            
 
             modelBuilder.Entity("Syper.Sets.Set", b =>
                 {

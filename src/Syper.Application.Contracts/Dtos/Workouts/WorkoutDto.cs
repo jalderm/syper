@@ -11,5 +11,5 @@ public class WorkoutDto : AuditedEntityDto<Guid>
 {
     public required string Name { get; set; }
     public required List<WorkoutSectionDto> WorkoutSections { get; set; } = new List<WorkoutSectionDto>();
-    public string ShortDescription { get; set; }
+    public string? ShortDescription { get; set; }
 }

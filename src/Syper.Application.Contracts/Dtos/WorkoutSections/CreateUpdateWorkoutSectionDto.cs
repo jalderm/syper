@@ -9,6 +9,6 @@ public class CreateUpdateWorkoutSectionDto
 {
     public required string Title { get; set; } = string.Empty;
     public required string Colour { get; set; } = string.Empty;
-    public required List<WorkoutExerciseDto> WorkoutExercises { get; set; } = new List<WorkoutExerciseDto>();
-    public required Guid WorkoutId { get; set; } // Foreign key to Workout
+    public required List<CreateUpdateWorkoutExerciseDto> WorkoutExercises { get; set; } = new List<CreateUpdateWorkoutExerciseDto>();
+    public required Guid WorkoutId { get; set; } = new Guid(); // Foreign key to Workout
 }
