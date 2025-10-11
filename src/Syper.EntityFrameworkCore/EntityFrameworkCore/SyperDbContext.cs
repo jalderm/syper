@@ -72,7 +72,7 @@ public class SyperDbContext :
     public SyperDbContext(DbContextOptions<SyperDbContext> options)
         : base(options)
     {
-
+        // options.EnableSensitiveDataLogging();
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

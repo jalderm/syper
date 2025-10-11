@@ -19,6 +19,7 @@ import { SelectDropDownModule } from 'ngx-select-dropdown';
 import { EventEmitter } from '@angular/core';
 import { WorkoutExerciseDto } from '../proxy/workout-exercises';
 import { WorkoutExercises } from '../proxy';
+import { SyperConsts } from '../shared/consts';
 
 
 const origCollapse = NgbAccordionItem.prototype['collapse'];
@@ -60,16 +61,14 @@ export class ExerciseDropdownComponent implements ControlValueAccessor {
   @Input() config: any = {};
   @Output() selectionChange = new EventEmitter<any>();
 
-  private onChangeFn: any = () => {};   // ✅ placeholder callbacks
+  private onChangeFn: any = () => {};
   private onTouchedFn: any = () => {};
   value: any;
 
   onChange(event: any) {
     this.value = event;
 
-    // ✅ notify Angular forms
     this.onChangeFn(event);
-    // ✅ notify parent component if they listen to (selectionChange)
     this.selectionChange.emit(event);
   }
 
@@ -78,7 +77,7 @@ export class ExerciseDropdownComponent implements ControlValueAccessor {
   }
 
   registerOnChange(fn: any): void {
-    this.onChangeFn = fn;   // ✅ assign callback from Angular forms
+    this.onChangeFn = fn;
   }
 
   registerOnTouched(fn: any): void {
@@ -86,7 +85,6 @@ export class ExerciseDropdownComponent implements ControlValueAccessor {
   }
 
   setDisabledState?(isDisabled: boolean): void {
-    // optional support for disabled state
   }
 }
 
@@ -100,21 +98,14 @@ export class ExerciseDropdownComponent implements ControlValueAccessor {
   providers: [ListService],
 })
 export class WorkoutComponent implements OnInit {
-  // Expose public version of enum for comparison in html
   public SetQuantityType = SetQuantityType;
 
   workouts = { items: [], totalCount: 0 } as PagedResultDto<WorkoutDto>;
   exercises = { items: [], totalCount: 0 } as PagedResultDto<ExerciseDto>;
-  // config = {
-  //   displayFn:(item: ExerciseDto) => { return item.title; },
-  //   placeholder: "Select an exercise",
-  //   search:true,
-  //   displayKey:"title"
-  // }
 
   config = {
     displayKey: "title",       // key in ExerciseDto to show in dropdown
-    search: true,             // enable search box
+    search: false,
     height: '200px',
     placeholder: 'Select exercises',
     customComparator: undefined,
@@ -134,9 +125,6 @@ export class WorkoutComponent implements OnInit {
   selectedWorkout = {} as CreateUpdateWorkoutDto | WorkoutDto; // declare selectedWorkout
 
   form: FormGroup;
-  sectionsForm: FormGroup;
-  setForm: FormGroup;
-  exerciseForm: FormGroup; 
   
   isModalOpen = false;
 
@@ -168,53 +156,38 @@ export class WorkoutComponent implements OnInit {
 
   buildForm() {
     this.form = this.fb.group({
+      id: [this.selectedWorkout.id || SyperConsts.blankGuid],
       name: [this.selectedWorkout.name || '', Validators.required],
       workoutSections: this.fb.array(
         this.selectedWorkout?.workoutSections?.map(section => this.buildSection(section)) || []
       ), 
     });
-
-    // this.sectionsForm = this.fb.group({
-    //   title: [ '', Validators.required ],
-    //   sections: this.fb.array([]),
-    // });
-    // this.exerciseForm = this.fb.group({
-    //     name: ['Select an Exercise', Validators.required],
-    //     exerciseId: ['', Validators.required],
-    //     exerciseDto: [null, Validators.required],
-    //     sets: this.fb.array([]),
-    //     workoutSectionId: "00000000-0000-0000-0000-000000000000"
-    // });
-    // this.setForm = this.fb.group({
-    //   unit: [ null, Validators.required ],
-    //   unitType: [ SetUnitType.Distance, Validators.required ],
-    //   quantity: [ '', Validators.required ],
-    //   quantityType: [ SetQuantityType.Time, Validators.required ],
-    //   rest: [ null ]
-    // });
   }
 
   buildSection(section: WorkoutSectionDto): FormGroup {
     return this.fb.group({
+      id: [section.id || SyperConsts.blankGuid],
       title: [section.title || '', Validators.required],
       colour: [section.colour || '#cccccc'],
       workoutExercises: this.fb.array(section.workoutExercises?.map(exercise => this.buildExercise(exercise)) || []),
-      workoutId: [section.workoutId || "00000000-0000-0000-0000-000000000000"]
+      workoutId: [section.workoutId || SyperConsts.blankGuid]
     });
   }
 
   buildExercise(exercise: WorkoutExerciseDto): FormGroup {
     return this.fb.group({
+        id: [exercise?.id || SyperConsts.blankGuid],
         name: [exercise?.exercise?.title || 'Select an Exercise', Validators.required],
         exerciseId: [exercise?.exerciseId || '', Validators.required],
         exerciseDto: [exercise?.exercise || null, Validators.required],
         sets: this.fb.array(exercise?.sets?.map(set => this.buildSet(set)) || []),
-        workoutSectionId: exercise?.workoutSectionId || "00000000-0000-0000-0000-000000000000"
+        workoutSectionId: exercise?.workoutSectionId || SyperConsts.blankGuid
     });
   }
 
   buildSet(set): FormGroup {
     return this.fb.group({
+      id: [set?.id || SyperConsts.blankGuid],
       unit: [set?.unit || null, Validators.required],
       unitType: [set?.unitType || SetUnitType.Distance, Validators.required],
       quantity: [set?.quantity || '', Validators.required],
@@ -265,7 +238,7 @@ export class WorkoutComponent implements OnInit {
 
   editWorkout(id: string) {
     this.loading.setLoading(true);
-    this.workoutService.get(id).subscribe((workout: WorkoutDto) => {
+    this.workoutService.get(id).subscribe((workout: CreateUpdateWorkoutDto) => {
       this.selectedWorkout = workout;
       this.selectedWorkout.id = id;
       this.normaliseSets(this.selectedWorkout, true);
@@ -296,7 +269,7 @@ export class WorkoutComponent implements OnInit {
         exerciseId: event.id,
         exerciseDto: event,
         sets: this.fb.array([]),
-        workoutSectionId: this.form.get('workoutSections').get('id')?.value ?? "00000000-0000-0000-0000-000000000000"
+        workoutSectionId: this.form.get('workoutSections').get('id')?.value ?? SyperConsts.blankGuid
     });
   }
 
@@ -325,7 +298,7 @@ export class WorkoutComponent implements OnInit {
         title: ['', Validators.required],
         colour: ['#cccccc'],
         workoutExercises: this.fb.array([]),
-        workoutId: "00000000-0000-0000-0000-000000000000"
+        workoutId: SyperConsts.blankGuid
       })
     );
   }
@@ -347,7 +320,7 @@ export class WorkoutComponent implements OnInit {
         exerciseId: ['', Validators.required],
         exerciseDto: [null, Validators.required],
         sets: this.fb.array([]),
-        workoutSectionId: this.workoutSections().at(sectionIndex).get('id') ?? "00000000-0000-0000-0000-000000000000"
+        workoutSectionId: this.workoutSections().at(sectionIndex).get('id') ?? SyperConsts.blankGuid
     })
   );
   }
@@ -432,10 +405,15 @@ export class WorkoutComponent implements OnInit {
     console.log(this.form.value);
 
     var w = this.form.value;
+
+    console.log(w);
+    console.log(this.selectedWorkout);
     
     this.normaliseSets(w);
 
-    console.log(w);
+    if (this.selectedWorkout.id) {
+      w.id = this.selectedWorkout.id;
+    }
 
     const request = this.selectedWorkout.id
       ? this.workoutService.update(this.selectedWorkout.id, w)
