@@ -43,14 +43,17 @@ public class SyperDataSeederContributor
             );
         }
 
+        // Becomes Run
+        // Measurement is distance, or time
+        // 
         if (await _exerciseRepository.GetCountAsync() <= 0)
         {
             await _exerciseRepository.InsertAsync(
-                new Exercise("Run (Distance)", ExerciseCategoryEnum.Distance),
+                new Exercise("Run (Distance Target)", ExerciseCategoryEnum.Distance),
                 autoSave: true
             );
             await _exerciseRepository.InsertAsync(
-                new Exercise("Run (Time)", ExerciseCategoryEnum.Time),
+                new Exercise("Run (Time Target)", ExerciseCategoryEnum.Time),
                 autoSave: true
             );
         }

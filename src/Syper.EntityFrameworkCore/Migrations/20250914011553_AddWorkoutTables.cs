@@ -143,7 +143,6 @@ namespace Syper.Migrations
                     QuantityType = table.Column<int>(type: "integer", nullable: false),
                     Rest = table.Column<TimeSpan>(type: "interval", nullable: true),
                     WorkoutExerciseId = table.Column<Guid>(type: "uuid", nullable: false),
-                    WorkoutExerciseId1 = table.Column<Guid>(type: "uuid", nullable: false),
                     ExtraProperties = table.Column<string>(type: "text", nullable: false),
                     ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
@@ -163,23 +162,12 @@ namespace Syper.Migrations
                         principalTable: "AppWorkoutExercises",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AppSets_AppWorkoutExercises_WorkoutExerciseId1",
-                        column: x => x.WorkoutExerciseId1,
-                        principalTable: "AppWorkoutExercises",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppSets_WorkoutExerciseId",
                 table: "AppSets",
                 column: "WorkoutExerciseId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppSets_WorkoutExerciseId1",
-                table: "AppSets",
-                column: "WorkoutExerciseId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppWorkoutExercises_ExerciseId",

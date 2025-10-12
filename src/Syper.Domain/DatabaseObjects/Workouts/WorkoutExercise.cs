@@ -16,14 +16,17 @@ namespace Syper.WorkoutExercises
 
         [ForeignKey(nameof(ExerciseId))]
         public required Exercise Exercise { get; set; } // Reference to Exercise
+        public required ICollection<Set> Sets { get; set; } = new List<Set>();
+        public int? Repeats { get; set; } // Number of times to repeat this exercise in the section
+
+
+        // References back up the tree
         public required Guid WorkoutSectionId { get; set; } // Foreign key to Exercise
 
         [ForeignKey(nameof(WorkoutSectionId))]
         public required WorkoutSection WorkoutSection { get; set; } // Reference to Exercise
 
-        public required List<Set> Sets { get; set; } = new List<Set>();
         
-
         public WorkoutExercise()
         {
             

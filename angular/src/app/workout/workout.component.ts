@@ -162,6 +162,7 @@ export class WorkoutComponent implements OnInit {
         this.selectedWorkout?.workoutSections?.map(section => this.buildSection(section)) || []
       ), 
     });
+    console.log(this.form);
   }
 
   buildSection(section: WorkoutSectionDto): FormGroup {
@@ -169,7 +170,9 @@ export class WorkoutComponent implements OnInit {
       id: [section.id || SyperConsts.blankGuid],
       title: [section.title || '', Validators.required],
       colour: [section.colour || '#cccccc'],
-      workoutExercises: this.fb.array(section.workoutExercises?.map(exercise => this.buildExercise(exercise)) || []),
+      workoutExercises: this.fb.array(
+        section.workoutExercises?.map(exercise => this.buildExercise(exercise)) || []
+      ),
       workoutId: [section.workoutId || SyperConsts.blankGuid]
     });
   }
@@ -192,7 +195,8 @@ export class WorkoutComponent implements OnInit {
       unitType: [set?.unitType || SetUnitType.Distance, Validators.required],
       quantity: [set?.quantity || '', Validators.required],
       quantityType: [set?.quantityType || SetQuantityType.Time, Validators.required],
-      rest: [set?.rest || null]
+      rest: [set?.rest || null],
+      workoutExerciseId: [set?.workoutExerciseId || SyperConsts.blankGuid]
     });
   }
 
@@ -264,7 +268,16 @@ export class WorkoutComponent implements OnInit {
       return;
     }
     const control = this.form.get('workoutSections').get(sectionIndex.toString()).get('workoutExercises').get(exerciseIndex.toString());
+    
+    var id = control.get('id').value;
+    if (control.value.exerciseId !== event.id) {
+      const setsArray = control.get('sets') as FormArray;
+      setsArray.clear();
+      id = SyperConsts.blankGuid; // reset ID for new exercise
+    }
+
     control.setValue({
+        id: id,
         name: event.title,
         exerciseId: event.id,
         exerciseDto: event,
@@ -316,6 +329,7 @@ export class WorkoutComponent implements OnInit {
     console.log(this.getExercises(sectionIndex));
     this.getExercises(sectionIndex).push(
     this.fb.group({
+        id: [SyperConsts.blankGuid, Validators.required],
         name: ['Select an Exercise', Validators.required],
         exerciseId: ['', Validators.required],
         exerciseDto: [null, Validators.required],
@@ -336,11 +350,13 @@ export class WorkoutComponent implements OnInit {
   addSet(sectionIndex: number, exerciseIndex: number) {
     this.getSets(sectionIndex, exerciseIndex).push(
       this.fb.group({
+        id: [SyperConsts.blankGuid, Validators.required],
         unit: [null, Validators.required],
         unitType: [SetUnitType.Distance, Validators.required],
         quantity: ['', Validators.required],
         quantityType: [SetQuantityType.Time, Validators.required],
         rest: [null],
+        workoutExerciseId: this.getExercises(sectionIndex).at(exerciseIndex).get('id') ?? SyperConsts.blankGuid
       })
     );
   }
@@ -390,7 +406,6 @@ export class WorkoutComponent implements OnInit {
             }
             s.unit = +s.unit;
           }
-          
         })
       })
     })
@@ -398,11 +413,10 @@ export class WorkoutComponent implements OnInit {
 
   save() {
     console.log("starting save");
+    console.log(this.form);
     if (this.form.invalid) {
       return;
     }
-
-    console.log(this.form.value);
 
     var w = this.form.value;
 
@@ -410,6 +424,8 @@ export class WorkoutComponent implements OnInit {
     console.log(this.selectedWorkout);
     
     this.normaliseSets(w);
+
+    console.log(w);
 
     if (this.selectedWorkout.id) {
       w.id = this.selectedWorkout.id;

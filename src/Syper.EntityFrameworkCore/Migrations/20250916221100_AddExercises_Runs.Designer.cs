@@ -230,14 +230,9 @@ namespace Syper.Migrations
                     b.Property<Guid>("WorkoutExerciseId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("WorkoutExerciseId1")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("WorkoutExerciseId");
-
-                    b.HasIndex("WorkoutExerciseId1");
 
                     b.ToTable("AppSets", (string)null);
                 });
@@ -2275,12 +2270,6 @@ namespace Syper.Migrations
                     b.HasOne("Syper.WorkoutExercises.WorkoutExercise", null)
                         .WithMany("Sets")
                         .HasForeignKey("WorkoutExerciseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Syper.WorkoutExercises.WorkoutExercise", "WorkoutExercise")
-                        .WithMany()
-                        .HasForeignKey("WorkoutExerciseId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

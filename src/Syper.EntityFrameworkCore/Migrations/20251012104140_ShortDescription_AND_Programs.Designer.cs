@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Syper.EntityFrameworkCore;
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Syper.Migrations
 {
     [DbContext(typeof(SyperDbContext))]
-    partial class SyperDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251012104140_ShortDescription_AND_Programs")]
+    partial class ShortDescription_AND_Programs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -267,8 +270,11 @@ namespace Syper.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("LastModifierId");
 
-                    b.Property<int?>("PerceivedEffort")
+                    b.Property<int>("PerceivedEffort")
                         .HasColumnType("integer");
+
+                    b.Property<decimal>("PercentageOfMax")
+                        .HasColumnType("numeric");
 
                     b.Property<decimal>("Quantity")
                         .HasColumnType("numeric");
@@ -279,18 +285,11 @@ namespace Syper.Migrations
                     b.Property<TimeSpan?>("Rest")
                         .HasColumnType("interval");
 
-                    b.Property<Guid?>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("TenantId");
-
                     b.Property<decimal>("Unit")
                         .HasColumnType("numeric");
 
                     b.Property<int>("UnitType")
                         .HasColumnType("integer");
-
-                    b.Property<decimal?>("UpperPercentageOfMax")
-                        .HasColumnType("numeric");
 
                     b.Property<Guid>("WorkoutExerciseId")
                         .HasColumnType("uuid");
@@ -357,7 +356,7 @@ namespace Syper.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("LastModifierId");
 
-                    b.Property<int?>("Repeats")
+                    b.Property<int>("Repeats")
                         .HasColumnType("integer");
 
                     b.Property<Guid?>("TenantId")

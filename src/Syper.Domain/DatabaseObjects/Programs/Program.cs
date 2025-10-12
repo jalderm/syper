@@ -8,23 +8,31 @@ using Syper.ClientStateEnum;
 using Syper.Clients;
 using Syper.WorkoutExercises;
 using Syper.WorkoutSections;
+using Syper.ProgramWorkouts;
 
 
-namespace Syper.Workouts
+namespace Syper.Programs
 {
-    public class Workout : MultiTenantFullAuditedAggregateRoot<Guid>
+    public class Program : MultiTenantFullAuditedAggregateRoot<Guid>
     {
         [MaxLength(32)]
         public required string Name { get; set; }
-        // WorkoutType (Easy, Interval, Long, Tempo, nullable (other))
 
-        public required List<WorkoutSection> WorkoutSections { get; set; } = new List<WorkoutSection>();
+        // program type - ongoing or fixed (subcription type)
+        // Duration (days)
+
+        public required List<ProgramWorkout> Workouts { get; set; } = new List<ProgramWorkout>();
+
+        // Goals
+        // Own data structure?
+        [MaxLength(255)]
+        public string? Goal { get; set; }
 
         // Do this off another table if required
         [MaxLength(255)]
         public string? ShortDescription { get; set; }
 
-        public Workout()
+        public Program()
         {
 
         }

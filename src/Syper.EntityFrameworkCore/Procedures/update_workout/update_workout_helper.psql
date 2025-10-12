@@ -1,0 +1,161 @@
+BEGIN;
+
+-- Create debug table outside the DO block (optional for error logging)
+CREATE TEMP TABLE IF NOT EXISTS debug_ex(message text);
+
+SELECT * FROM "AppSets";
+
+DO $$
+DECLARE
+    v_workout_id uuid;
+    v_section jsonb;
+    v_exercise jsonb;
+    v_set jsonb;
+    tenant_id uuid := '3a1bc556-7269-a254-d3da-1e5de700d173';
+    p_workout_json jsonb := '{
+      "Id": "3a1ce536-aa1f-feb8-9c49-c67e8115bcaf",
+      "Name": "A new test workout",
+      "WorkoutSections": [
+        {
+          "Id": "3a1ce536-aa22-c63c-f814-f5088fbb5132",
+          "Title": "Abc123",
+          "Colour": "#cccccc",
+          "WorkoutExercises": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000000",
+              "ExerciseId": "3a1c66c8-d1f0-0577-f01f-edefba0f8cb5",
+              "Sets": [
+                {
+                  "Id": "00000000-0000-0000-0000-000000000000",
+                  "Quantity": 660,
+                  "Unit": 30,
+                  "UnitType": 1,
+                  "QuantityType": 1,
+                  "Rest": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }';
+BEGIN
+    -- Extract workout ID
+    v_workout_id := (p_workout_json->>'Id')::uuid;
+
+    -- Update workout name
+    UPDATE "AppWorkouts"
+    SET "Name" = p_workout_json->>'Name'
+    WHERE "Id" = v_workout_id;
+    
+
+    -- Loop through sections
+    FOR v_section IN
+        SELECT * FROM jsonb_array_elements(p_workout_json->'WorkoutSections')
+    LOOP
+        RAISE NOTICE 'Section: %', v_section->>'Id';
+
+        INSERT INTO "AppWorkoutSections"(
+            "Id", "Title", "Colour", "ExtraProperties", "WorkoutId",
+            "ConcurrencyStamp", "CreationTime", "TenantId"
+        )
+        VALUES (
+	          CASE 
+              WHEN v_section->>'Id' = '00000000-0000-0000-0000-000000000000' 
+              THEN gen_random_uuid()
+              ELSE (v_section->>'Id')::uuid 
+            END,
+            v_section->>'Title',
+            v_section->>'Colour',
+            '{}',
+            v_workout_id,
+            gen_random_uuid()::text,
+            NOW(),
+            tenant_id
+        )
+        ON CONFLICT ("Id") DO UPDATE
+        SET "Title" = EXCLUDED."Title",
+            "Colour" = EXCLUDED."Colour";
+
+        -- Loop through exercises
+        FOR v_exercise IN
+            SELECT * FROM jsonb_array_elements(v_section->'WorkoutExercises')
+        LOOP
+            RAISE NOTICE 'Exercise: %', v_exercise->>'Id';
+
+            INSERT INTO "AppWorkoutExercises"(
+                "Id", "ExerciseId", "WorkoutSectionId", "ExtraProperties",
+                "ConcurrencyStamp", "CreationTime", "TenantId"
+            )
+            VALUES (
+                CASE 
+                  WHEN v_exercise->>'Id' = '00000000-0000-0000-0000-000000000000' 
+                  THEN gen_random_uuid()
+                  ELSE (v_exercise->>'Id')::uuid 
+                END,
+                (v_exercise->>'ExerciseId')::uuid,
+                (v_section->>'Id')::uuid,
+                '{}',
+                gen_random_uuid()::text,
+                NOW(),
+                tenant_id
+            )
+            ON CONFLICT ("Id") DO UPDATE
+            SET "ExerciseId" = EXCLUDED."ExerciseId";
+
+            -- Loop through sets
+            FOR v_set IN
+                SELECT * FROM jsonb_array_elements(v_exercise->'Sets')
+            LOOP
+                RAISE NOTICE 'Set: %', v_set->>'Id';
+
+                INSERT INTO "AppSets"(
+                    "Id", "WorkoutExerciseId", "Quantity", "QuantityType",
+                    "Unit", "UnitType", "Rest", "ExtraProperties",
+                    "ConcurrencyStamp", "CreationTime", "TenantId", "LastModificationTime"
+                )
+                VALUES (
+                    CASE 
+                      WHEN v_set->>'Id' = '00000000-0000-0000-0000-000000000000' 
+                      THEN gen_random_uuid()
+                      ELSE (v_set->>'Id')::uuid 
+                    END,
+                    (v_exercise->>'Id')::uuid,
+                    (v_set->>'Quantity')::int,
+                    (v_set->>'QuantityType')::int,
+                    (v_set->>'Unit')::int,
+                    (v_set->>'UnitType')::int,
+                    CASE 
+                        WHEN v_set->>'Rest' IS NULL OR v_set->>'Rest' = 'null' THEN NULL
+                        ELSE (v_set->>'Rest')::interval
+                    END,
+                    '{}',
+                    gen_random_uuid()::text,
+                    NOW(),
+                    tenant_id,
+                    NOW()
+                )
+                ON CONFLICT ("Id") DO UPDATE
+                SET "Quantity" = EXCLUDED."Quantity",
+                    "QuantityType" = EXCLUDED."QuantityType",
+                    "Unit" = EXCLUDED."Unit",
+                    "UnitType" = EXCLUDED."UnitType",
+                    "Rest" = EXCLUDED."Rest",
+                    "LastModificationTime" = EXCLUDED."LastModificationTime";
+            END LOOP;
+        END LOOP;
+    END LOOP;
+
+EXCEPTION WHEN OTHERS THEN
+    INSERT INTO debug_ex(message) VALUES (
+        COALESCE('Error: ' || SQLERRM, 'Unknown error')
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM debug_ex;
+
+-- View inserted sections (outside DO block)
+SELECT * FROM "AppSets";
+
+ROLLBACK;
