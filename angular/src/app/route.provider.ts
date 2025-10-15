@@ -32,6 +32,13 @@ function configureRoutes() {
         requiredPolicy: 'Syper.Workouts',
       },
       {
+        path: '/programs',
+        name: '::Menu:Programs',
+        iconClass: 'fas fa-calendar',
+        layout: eLayoutType.application,
+        requiredPolicy: 'Syper.Programs',
+      },
+      {
         path: '/training-plans',
         name: '::Menu:TrainingPlans',
         iconClass: 'fas fa-clipboard-list',

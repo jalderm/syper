@@ -25,6 +25,11 @@ public class SyperPermissionDefinitionProvider : PermissionDefinitionProvider
         exercisesPermission.AddChild(SyperPermissions.Exercises.Create, L("Permission:exercises.Create"));
         exercisesPermission.AddChild(SyperPermissions.Exercises.Edit, L("Permission:exercises.Edit"));
         exercisesPermission.AddChild(SyperPermissions.Exercises.Delete, L("Permission:exercises.Delete")); 
+
+        var programsPermission = myGroup.AddPermission(SyperPermissions.Programs.Default, L("Permission:programs"));
+        programsPermission.AddChild(SyperPermissions.Programs.Create, L("Permission:programs.Create"));
+        programsPermission.AddChild(SyperPermissions.Programs.Edit, L("Permission:programs.Edit"));
+        programsPermission.AddChild(SyperPermissions.Programs.Delete, L("Permission:programs.Delete")); 
         
         // var exercisesPermission = myGroup.AddPermission(SyperPermissions.Exercises.Default, L("Permission:trainingPlans"));
         // exercisesPermission.AddChild(SyperPermissions.Exercises.Create, L("Permission:trainingPlans.Create"));

@@ -9,6 +9,7 @@
     "Menu:Syper": "Client Store",
     "Menu:Clients": "Clients",
     "Menu:Workouts": "Workouts",
+    "Menu:Programs": "Programs",
     "Actions": "Actions",
     "Close": "Close",
     "Delete": "Delete",
@@ -35,6 +36,10 @@
     "LongWelcomeMessage": "Welcome back! Here's a quick overview of clients running this week!",
     "Welcome": "Welcome",
 
+    "Permission:programs": "Program Management",
+    "NewProgram": "New Program",
+    "DurationWeeks": "Duration (weeks)",
+    "EnterDescription": "Enter a brief description",
     "Enum:ClientState.0": "Pending",
     "Enum:ClientState.1": "Active",
     "Enum:ClientState.2": "Inactive",

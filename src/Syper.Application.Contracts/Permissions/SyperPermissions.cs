@@ -37,4 +37,12 @@ public static class SyperPermissions
         public const string Edit = Default + ".Edit";
         public const string Delete = Default + ".Delete";
     }
+
+    public static class Programs
+    {
+        public const string Default = GroupName + ".Programs";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+    }
 }

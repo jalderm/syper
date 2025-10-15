@@ -32,6 +32,7 @@ const routes: Routes = [
     loadChildren: () => import('./client/client.module').then(m => m.ClientModule)
   },
   { path: 'workouts', loadChildren: () => import('./workout/workout.module').then(m => m.WorkoutModule) },
+  { path: 'programs', loadChildren: () => import('./programs/program.module').then(m => m.ProgramModule) },
 ];
 
 @NgModule({

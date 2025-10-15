@@ -1,9 +1,14 @@
+import * as ActivityTypeEnum from './activity-type-enum';
 import * as ClientStateEnum from './client-state-enum';
 import * as Clients from './clients';
 import * as ExerciseCategories from './exercise-categories';
 import * as Exercises from './exercises';
+import * as Programs from './programs';
+import * as ScheduleActivities from './schedule-activities';
+import * as ScheduleDays from './schedule-days';
 import * as Sets from './sets';
+import * as WeeklySchedules from './weekly-schedules';
 import * as WorkoutExercises from './workout-exercises';
 import * as WorkoutSections from './workout-sections';
 import * as Workouts from './workouts';
-export { ClientStateEnum, Clients, ExerciseCategories, Exercises, Sets, WorkoutExercises, WorkoutSections, Workouts };
+export { ActivityTypeEnum, ClientStateEnum, Clients, ExerciseCategories, Exercises, Programs, ScheduleActivities, ScheduleDays, Sets, WeeklySchedules, WorkoutExercises, WorkoutSections, Workouts };

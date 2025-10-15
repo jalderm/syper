@@ -24,6 +24,10 @@ using Syper.WorkoutSections;
 using Syper.WorkoutExercises;
 using Syper.Exercises;
 using Syper.ClientCoachSubscriptions;
+using Syper.Programs;
+using Syper.WeeklySchedules;
+using Syper.ScheduleDays;
+using Syper.ScheduleActivities;
 
 [ReplaceDbContext(typeof(IIdentityDbContext))]
 [ReplaceDbContext(typeof(ITenantManagementDbContext))]
@@ -38,6 +42,7 @@ public class SyperDbContext :
     public DbSet<Client> Clients { get; set; }
     public DbSet<Workout> Workouts { get; set; }
     public DbSet<Exercise> Exercises { get; set; }
+    public DbSet<Program> Programs { get; set; }
     public DbSet<ClientCoachSubscription> ClientCoachSubscription { get; set; }
 
     #region Entities from the modules
@@ -162,7 +167,7 @@ public class SyperDbContext :
             b.Property(x => x.Repeats).IsRequired(false);
 
         });
-        
+
         builder.Entity<ClientCoachSubscription>(b =>
         {
             b.ToTable(SyperConsts.DbTablePrefix + "ClientCoachSubscriptions",
@@ -171,6 +176,47 @@ public class SyperDbContext :
             b.Property(x => x.ClientId).IsRequired();
             b.Property(x => x.TenantId).IsRequired();
             b.HasIndex(x => new { x.ClientId, x.TenantId }).IsUnique();
+        });
+
+        builder.Entity<Program>(b =>
+        {
+            b.ToTable(SyperConsts.DbTablePrefix + "Programs",
+                SyperConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.Name).IsRequired().HasMaxLength(32);
+            b.Property(x => x.Duration).IsRequired();
+            b.Property(x => x.Goal).HasMaxLength(255).IsRequired(false);
+            b.Property(x => x.ShortDescription).HasMaxLength(255).IsRequired(false);
+            b.HasMany(x => x.Weeks).WithOne().HasForeignKey(x => x.ProgramId).IsRequired();
+        });
+
+        builder.Entity<WeeklySchedule>(b =>
+        {
+            b.ToTable(SyperConsts.DbTablePrefix + "WeeklySchedules",
+                SyperConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.Notes).HasMaxLength(255).IsRequired(false);
+            b.HasMany(x => x.ScheduleDays).WithOne().HasForeignKey(x => x.WeeklyScheduleId).IsRequired();
+        });
+
+        builder.Entity<ScheduleDay>(b =>
+        {
+            b.ToTable(SyperConsts.DbTablePrefix + "ScheduleDays",
+                SyperConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.DayOfWeek).IsRequired();
+            b.Property(x => x.Notes).HasMaxLength(255).IsRequired(false);
+            b.HasMany(x => x.Activities).WithOne().HasForeignKey(x => x.ScheduleDayId).IsRequired();
+        });
+        
+        builder.Entity<ScheduleActivity>(b =>
+        {
+            b.ToTable(SyperConsts.DbTablePrefix + "ScheduleActivities",
+                SyperConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.Type).IsRequired();
+            b.Property(x => x.WorkoutId).IsRequired(false);
+            b.Property(x => x.ScheduleDayId).IsRequired();
         });
     }
 }

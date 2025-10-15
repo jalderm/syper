@@ -8,7 +8,7 @@ using Syper.ClientStateEnum;
 using Syper.Clients;
 using Syper.WorkoutExercises;
 using Syper.WorkoutSections;
-using Syper.ProgramWorkouts;
+using Syper.WeeklySchedules;
 
 
 namespace Syper.Programs
@@ -19,18 +19,20 @@ namespace Syper.Programs
         public required string Name { get; set; }
 
         // program type - ongoing or fixed (subcription type)
-        // Duration (days)
 
-        public required List<ProgramWorkout> Workouts { get; set; } = new List<ProgramWorkout>();
+        // Duration (weeks)
+        public int Duration { get; set; }
 
         // Goals
         // Own data structure?
         [MaxLength(255)]
-        public string? Goal { get; set; }
+        public string? Duration { get; set; }
 
         // Do this off another table if required
         [MaxLength(255)]
         public string? ShortDescription { get; set; }
+
+        public required ICollection<WeeklySchedule> Weeks { get; set; } = new List<WeeklySchedule>();
 
         public Program()
         {
