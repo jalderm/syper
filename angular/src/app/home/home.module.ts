@@ -19,8 +19,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
         environment,
         registerLocaleFn: registerLocale(),
       }),
-    ),
-    provideAnimationsAsync(),
+    )
   ],
 })
 export class HomeModule {}

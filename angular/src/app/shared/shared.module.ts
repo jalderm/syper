@@ -22,6 +22,7 @@ import * as echarts from 'echarts';
 
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 
 
@@ -74,6 +75,7 @@ import Aura from '@primeng/themes/aura';
     NgxEchartsModule
   ],
   providers: [
+    provideAnimationsAsync(),
     providePrimeNG({
         theme: {
             preset: Aura

@@ -18,4 +18,16 @@ export class BaseComponent implements OnInit{
       this.authService.navigateToLogin();
     }
   }
+
+  consts = {
+    primaryColour: getComputedStyle(document.documentElement)
+      .getPropertyValue('--syper-primary-color')
+      .trim(),
+    successColour: getComputedStyle(document.documentElement)
+      .getPropertyValue('--syper-success-color')
+      .trim(),
+    warningColour: getComputedStyle(document.documentElement)
+      .getPropertyValue('--syper-warning-color')
+      .trim(),
+  }
 }

@@ -160,7 +160,7 @@
     <div class="detail-header">
       <h1>{{ selectedRunner.name }}</h1>
       <p-button 
-        *ngIf="selectedMonth" 
+        *ngIf="selectedMonth || selectedRunType" 
         label="Clear Filter" 
         (onClick)="clearFilter()"
         severity="secondary">
@@ -207,7 +207,7 @@
     </p-card>
 
     <p-card header="Run Type Distribution">
-      <div echarts [options]="runTypeChartOptions" style="height: 250px;"></div>
+      <div echarts [options]="runTypeChartOptions" style="height: 250px;" (chartClick)="handleRunTypeClick($event)"></div>
     </p-card>
   </div>
 

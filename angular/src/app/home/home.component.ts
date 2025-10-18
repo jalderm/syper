@@ -71,6 +71,7 @@ export class HomeComponent extends BaseComponent {
   view: 'overview' | 'detail' = 'overview';
   selectedRunner: Runner | null = null;
   selectedMonth: string | null = null;
+  selectedRunType: 'Long Run' | 'Tempo' | 'Recovery' | 'Easy' | 'Intervals' = null;
 
   runners: Runner[] = [
     { id: 1, name: 'Sarah Johnson', totalDistance: 245.3, totalRuns: 28, avgPace: '5:12', weeklyGoal: 50, currentWeek: 42 },
@@ -86,6 +87,21 @@ export class HomeComponent extends BaseComponent {
     { week: 'Week 3', distance: 210, runs: 16 },
     { week: 'Week 4', distance: 225, runs: 20 },
   ];
+
+  month = {
+    'Jan': 1,
+    'Feb': 2,
+    'Mar': 3,
+    'Apr': 4,
+    'May': 5,
+    'Jun': 6,
+    'Jul': 7,
+    'Aug': 8,
+    'Sep': 9,
+    'Oct': 10,
+    'Nov': 11,
+    'Dec': 12,
+  }
 
   runnerDetailData: any = {
     1: {
@@ -133,6 +149,7 @@ export class HomeComponent extends BaseComponent {
   handleRunnerClick(runner: Runner) {
     this.selectedRunner = runner;
     this.selectedMonth = null;
+    this.selectedRunType = null;
     this.view = 'detail';
     this.updateMonthlyChart();
     this.updateRunTypeChart();
@@ -141,6 +158,7 @@ export class HomeComponent extends BaseComponent {
   handleBackToOverview() {
     this.selectedRunner = null;
     this.selectedMonth = null;
+    this.selectedRunType = null;
     this.view = 'overview';
   }
 
@@ -151,9 +169,18 @@ export class HomeComponent extends BaseComponent {
     }
   }
 
+  handleRunTypeClick(event: any) {
+    if (event && event.name) {
+      this.selectedRunType = event.name;
+      this.updateMonthlyChart();
+    }
+  }
+
   clearFilter() {
     this.selectedMonth = null;
+    this.selectedRunType = null;
     this.updateRunTypeChart();
+    this.updateMonthlyChart();
   }
 
   updateWeeklyChart() {
@@ -186,19 +213,49 @@ export class HomeComponent extends BaseComponent {
 
   updateMonthlyChart() {
     if (!this.selectedRunner) return;
-    
-    const data = this.runnerDetailData[this.selectedRunner.id].monthlyProgress;
-    
-    this.monthlyChartOptions = {
-      xAxis: { type: 'category', data: data.map((d: MonthData) => d.month) },
-      yAxis: { type: 'value', name: 'Distance (km)' },
-      series: [{
-        data: data.map((d: MonthData) => d.distance),
-        type: 'bar',
-        itemStyle: { color: '#3b82f6' }
-      }],
-      tooltip: { trigger: 'axis' }
-    };
+
+    if (this.selectedRunType) {
+      const details = this.runnerDetailData[this.selectedRunner.id];
+      const filteredRuns = details.recentRuns.filter((run: Run) => run.type === this.selectedRunType);
+      
+      var monthlyChartData: any = [];
+      filteredRuns.forEach(run => {
+        const monthEntry = monthlyChartData.find((m: any) => m.month === run.month);
+        if (monthEntry) {
+          monthEntry.distance += run.distance;
+          monthEntry.runs += 1;
+        } else {
+          monthlyChartData.push({ month: run.month, distance: run.distance, runs: 1 });
+        }
+      });
+
+      monthlyChartData.sort((a: any, b: any) => this.month[a.month] - this.month[b.month]);
+      
+      this.monthlyChartOptions = {
+        xAxis: { type: 'category', data: monthlyChartData.map((d: any) => d.month) },
+        yAxis: { type: 'value', name: 'Distance (km)' },
+        series: [{
+          data: monthlyChartData.map((d: any) => d.distance),
+          type: 'bar',
+          itemStyle: { color: this.consts.primaryColour }
+        }],
+        tooltip: { trigger: 'axis' }
+      };
+    }
+    else {
+      const data = this.runnerDetailData[this.selectedRunner.id].monthlyProgress;
+      
+      this.monthlyChartOptions = {
+        xAxis: { type: 'category', data: data.map((d: MonthData) => d.month) },
+        yAxis: { type: 'value', name: 'Distance (km)' },
+        series: [{
+          data: data.map((d: MonthData) => d.distance),
+          type: 'bar',
+          itemStyle: { color: this.consts.primaryColour }
+        }],
+        tooltip: { trigger: 'axis' }
+      };
+    }
   }
 
   updateRunTypeChart() {
@@ -271,9 +328,9 @@ export class HomeComponent extends BaseComponent {
 
   getProgressColor(runner: Runner): string {
     const progress = (runner.currentWeek / runner.weeklyGoal) * 100;
-    if (progress >= 100) return '#10b981';
-    if (progress >= 75) return '#3b82f6';
-    return '#f59e0b';
+    if (progress >= 100) return this.consts.successColour;
+    if (progress >= 75) return this.consts.primaryColour;
+    return this.consts.warningColour;
   }
 
   getInitials(name: string): string {

@@ -8,6 +8,16 @@
 }
 
 :root {
+  --syper-primary-color: #007bff;
+  --syper-secondary-color: #6c757d;
+  --syper-success-color: #28a745;
+  --syper-danger-color: #dc3545;
+  --syper-warning-color: #ffc107;
+  --syper-info-color: #17a2b8;
+  --syper-light-color: #f8f9fa;
+  --syper-dark-color: #343a40;
+
+
   --lpx-theme-light-bg: url('/assets/images/login/login-bg-img-light.svg');
   --lpx-theme-dim-bg: url('/assets/images/login/login-bg-img-dim.svg');
   --lpx-theme-dark-bg: url('/assets/images/login/login-bg-img-dark.svg');
@@ -39,4 +49,10 @@
     height: 20px;
     background-image: url('/assets/images/getting-started/x.svg');
   }
+
+  .p-progressbar-value {
+    margin: 0;
+    background: var(--p-progressbar-value-background, var(--syper-primary-color)); /* fallback */
+  }
+
 }
