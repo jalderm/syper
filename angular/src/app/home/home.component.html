@@ -1,12 +1,7 @@
-<div class="mb-4">
-  <h2 class="h4">Dashboard</h2>
-  <p class="text-muted">
-    {{ '::LongWelcomeMessage' | abpLocalization }}
-  </p>
-</div>
 <!-- Stats Grid -->
+<!-- Orginal stats cards -->
 <div class="row g-4">
-  <div class="col-12 col-md-6 col-lg-3">
+  <!-- <div class="col-12 col-md-6 col-lg-3">
     <app-stats-card
       title="{{ '::Home:ActiveRunners' | abpLocalization }}"
       [value]="activeRunnersCount"
@@ -41,5 +36,204 @@
       icon="event"
       color="purple">
     </app-stats-card>
+  </div> -->
+
+  <div class="dashboard-container" *ngIf="view === 'overview'">
+    <div class="header">
+      <h1>Running Coach Dashboard</h1>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-content">
+          <p class="stat-label">Active Runners</p>
+          <p class="stat-value">{{ runners.length }}</p>
+        </div>
+        <div class="stat-icon blue-bg">
+          <i class="pi pi-users"></i>
+        </div>
+      </div>
+
+      <div class="stat-card green">
+        <div class="stat-content">
+          <p class="stat-label">Total Distance</p>
+          <p class="stat-value">1,108 km</p>
+        </div>
+        <div class="stat-icon green-bg">
+          <i class="pi pi-chart-line"></i>
+        </div>
+      </div>
+
+      <div class="stat-card purple">
+        <div class="stat-content">
+          <p class="stat-label">Total Activities</p>
+          <p class="stat-value">128</p>
+        </div>
+        <div class="stat-icon purple-bg">
+          <i class="pi pi-bolt"></i>
+        </div>
+      </div>
+
+      <div class="stat-card orange">
+        <div class="stat-content">
+          <p class="stat-label">Avg Pace</p>
+          <p class="stat-value">5:27</p>
+        </div>
+        <div class="stat-icon orange-bg">
+          <i class="pi pi-trophy"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <p-card header="Weekly Team Performance">
+        <div echarts [options]="weeklyChartOptions" style="height: 300px;"></div>
+      </p-card>
+
+      <p-card header="Weekly Goal Progress">
+        <div class="progress-list">
+          <div *ngFor="let runner of runners" class="progress-item">
+            <div class="progress-header">
+              <span class="runner-name">{{ runner.name }}</span>
+              <span class="progress-text">{{ runner.currentWeek }}/{{ runner.weeklyGoal }} km</span>
+            </div>
+            <p-progressBar 
+              [value]="getProgressPercentage(runner)" 
+              [style]="{'height': '10px'}"
+              [showValue]="false">
+            </p-progressBar>
+          </div>
+        </div>
+      </p-card>
+    </div>
+
+    <p-card header="Athletes Overview">
+      <p-table [value]="runners" [tableStyle]="{'min-width': '50rem'}">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Athlete</th>
+            <th>Total Distance</th>
+            <th>Total Runs</th>
+            <th>Avg Pace</th>
+            <th>This Week</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-runner>
+          <tr>
+            <td>
+              <div class="athlete-cell">
+                <div class="avatar">{{ getInitials(runner.name) }}</div>
+                <span>{{ runner.name }}</span>
+              </div>
+            </td>
+            <td>{{ runner.totalDistance }} km</td>
+            <td>{{ runner.totalRuns }}</td>
+            <td>{{ runner.avgPace }} /km</td>
+            <td>{{ runner.currentWeek }}/{{ runner.weeklyGoal }} km</td>
+            <td>
+              <p-button 
+                label="View Details" 
+                icon="pi pi-arrow-right" 
+                iconPos="right"
+                [text]="true"
+                (onClick)="handleRunnerClick(runner)">
+              </p-button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
   </div>
+  
+
+<div class="dashboard-container" *ngIf="view === 'detail' && selectedRunner">
+  <p-button 
+    label="Back to Overview" 
+    icon="pi pi-arrow-left" 
+    [text]="true"
+    (onClick)="handleBackToOverview()"
+    styleClass="mb-3">
+  </p-button>
+
+  <p-card>
+    <div class="detail-header">
+      <h1>{{ selectedRunner.name }}</h1>
+      <p-button 
+        *ngIf="selectedMonth" 
+        label="Clear Filter" 
+        (onClick)="clearFilter()"
+        severity="secondary">
+      </p-button>
+    </div>
+    
+    <p-tag *ngIf="selectedMonth" severity="info" styleClass="mb-3">
+      Viewing: {{ selectedMonth }} 2025
+    </p-tag>
+
+    <div class="stats-grid mt-4">
+      <div class="stat-card blue">
+        <p class="stat-label">{{ selectedMonth ? 'Month Distance' : 'Total Distance' }}</p>
+        <p class="stat-value">{{ getFilteredData()?.distance }} km</p>
+      </div>
+
+      <div class="stat-card purple">
+        <p class="stat-label">{{ selectedMonth ? 'Month Runs' : 'Total Runs' }}</p>
+        <p class="stat-value">{{ getFilteredData()?.runs }}</p>
+      </div>
+
+      <div class="stat-card pink">
+        <p class="stat-label">Avg Pace</p>
+        <p class="stat-value">{{ getFilteredData()?.avgPace }} /km</p>
+      </div>
+
+      <div class="stat-card orange">
+        <p class="stat-label">{{ selectedMonth ? 'Avg km/week' : 'This Week' }}</p>
+        <p class="stat-value">
+          {{ selectedMonth ? getFilteredData()?.avgKmPerWeek + ' km' : selectedRunner.currentWeek + '/' + selectedRunner.weeklyGoal + ' km' }}
+        </p>
+      </div>
+    </div>
+  </p-card>
+
+  <div class="charts-grid mt-4">
+    <p-card>
+      <ng-template pTemplate="header">
+        Monthly Progress 
+        <span *ngIf="selectedMonth" class="text-primary"> - Click bar to clear</span>
+      </ng-template>
+      <div echarts [options]="monthlyChartOptions" (chartClick)="handleMonthClick($event)" style="height: 250px;"></div>
+      <p class="chart-hint">Click on a bar to filter by month</p>
+    </p-card>
+
+    <p-card header="Run Type Distribution">
+      <div echarts [options]="runTypeChartOptions" style="height: 250px;"></div>
+    </p-card>
+  </div>
+
+  <p-card header="{{ selectedMonth ? 'Activities in ' + selectedMonth : 'Recent Activities' }}" class="mt-4">
+    <p-table [value]="getFilteredData()?.recentRuns" [tableStyle]="{'min-width': '50rem'}">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Distance</th>
+          <th>Duration</th>
+          <th>Pace</th>
+          <th>Elevation</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-run>
+        <tr>
+          <td>{{ run.date }}</td>
+          <td><p-tag [value]="run.type"></p-tag></td>
+          <td>{{ run.distance }} km</td>
+          <td>{{ run.duration }}</td>
+          <td>{{ run.pace }} /km</td>
+          <td>{{ run.elevation }}m</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>
 </div>

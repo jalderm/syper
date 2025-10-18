@@ -132,7 +132,9 @@
               "src/styles.scss",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/@primeuix/themes/umd/aura.js"
+            ]
           },
           "configurations": {
             "production": {

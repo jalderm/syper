@@ -7,6 +7,24 @@ import { StatsCardComponent } from '../stats/stats-card.component';
 import { CommonModule } from '@angular/common';
 import { CdkDrag, CdkDropList, DragDropModule } from '@angular/cdk/drag-drop';
 
+
+// PrimeNG Modules
+import { CardModule } from 'primeng/card';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { TagModule } from 'primeng/tag';
+import { SharedModule as PngShared } from 'primeng/api';
+
+// NgxEcharts for charts
+import { NgxEchartsModule } from 'ngx-echarts';
+import * as echarts from 'echarts';
+
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
+
+
+
 @NgModule({
   declarations: [],
   imports: [
@@ -19,7 +37,18 @@ import { CdkDrag, CdkDropList, DragDropModule } from '@angular/cdk/drag-drop';
     NgbDatepickerModule,
     DragDropModule,
     CdkDropList,
-    CdkDrag
+    CdkDrag,
+
+    PngShared,
+
+    // Export PrimeNG Modules
+    CardModule,
+    TableModule,
+    ButtonModule,
+    ProgressBarModule,
+    TagModule,
+
+    NgxEchartsModule.forRoot({ echarts })
   ],
   exports: [
     CoreModule,
@@ -31,8 +60,25 @@ import { CdkDrag, CdkDropList, DragDropModule } from '@angular/cdk/drag-drop';
     NgbDatepickerModule,
     DragDropModule,
     CdkDropList,
-    CdkDrag
+    CdkDrag,
+
+    PngShared,
+
+    // Export PrimeNG Modules
+    CardModule,
+    TableModule,
+    ButtonModule,
+    ProgressBarModule,
+    TagModule,
+
+    NgxEchartsModule
   ],
-  providers: []
+  providers: [
+    providePrimeNG({
+        theme: {
+            preset: Aura
+        }
+    })
+  ]
 })
 export class SharedModule {}
