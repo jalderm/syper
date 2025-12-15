@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Volo.Abp.Application.Dtos;
 using System.ComponentModel.DataAnnotations;
 using Syper.ClientStateEnum;
-using Syper.WeeklySchedules;
+using Syper.ScheduleDays;
 
 namespace Syper.Programs;
 
@@ -13,5 +13,5 @@ public class CreateUpdateProgramDto : AuditedEntityDto<Guid>
     public int Duration { get; set; }
     public string? Goal { get; set; }
     public string? ShortDescription { get; set; }
-    public required ICollection<CreateUpdateWeeklyScheduleDto> Weeks { get; set; } = new List<CreateUpdateWeeklyScheduleDto>();
+    public required ICollection<CreateUpdateScheduleDayDto> Weeks { get; set; } = new List<CreateUpdateScheduleDayDto>();
 }

@@ -9,19 +9,19 @@ using Syper.Clients;
 using Syper.WorkoutExercises;
 using Syper.Workouts;
 using Syper.ScheduleActivities;
-using Syper.WeeklySchedules;
+using Syper.Programs;
 
 namespace Syper.ScheduleDays
 {
     public class ScheduleDay : MultiTenantFullAuditedAggregateRoot<Guid>
     {
-        public required DayOfWeek DayOfWeek { get; set; }
+        public required int DayOffSet { get; set; } // 0 based index for day in week
         public required ICollection<ScheduleActivity> Activities { get; set; }
         public string? Notes { get; set; }
 
-        public required Guid WeeklyScheduleId { get; set; }
-        [ForeignKey("WeeklyScheduleId")]
-        public WeeklySchedule WeeklySchedule { get; set; }
+        public required Guid ProgramId { get; set; }
+        [ForeignKey("ProgramId")]
+        public Program Program { get; set; }
 
         public ScheduleDay()
         {

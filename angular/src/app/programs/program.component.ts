@@ -6,7 +6,28 @@ import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
 import { LoadingService } from '../services/loading.service';
 import { scheduled } from 'rxjs';
 import { ProgramDto, ProgramService } from '../proxy/programs';
-import { WeeklyScheduleDto } from '../proxy/weekly-schedules';
+import { ScheduleDayDto } from '../proxy/schedule-days';
+import { WorkoutDto, WorkoutService } from '../proxy/workouts';
+import { ScheduleActivityDto } from '../proxy/schedule-activities';
+
+class ScheduleBuilderDay implements ScheduleDayDto {
+  dayOffSet: number;
+  activities: ScheduleActivityDto[];
+  notes?: string;
+  programId: string;
+  lastModificationTime?: string | Date;
+  lastModifierId?: string;
+  creationTime?: string | Date;
+  creatorId?: string;
+  id?: string;
+  isRestDay: boolean;
+
+  constructor(dayOffSet: number = 0) {
+    this.dayOffSet = dayOffSet;
+    this.activities = [];
+    this.isRestDay = false;
+  }
+}
 
 @Component({
   standalone: false,
@@ -17,7 +38,9 @@ import { WeeklyScheduleDto } from '../proxy/weekly-schedules';
 })
 export class ProgramComponent implements OnInit {
   programs = { items: [], totalCount: 0 } as PagedResultDto<ProgramDto>;
+  availableWorkouts = { items: [], totalCount: 0 } as PagedResultDto<WorkoutDto>;
   selectedProgram = {} as ProgramDto; // declare selectedProgram
+  scheduleBuilderDays: ScheduleBuilderDay[] = [];
   form: FormGroup;
   isModalOpen = false;
   isOngoing = false;
@@ -25,6 +48,7 @@ export class ProgramComponent implements OnInit {
   constructor(
     public readonly list: ListService,
     private programService: ProgramService,
+    private workoutService: WorkoutService,
     private fb: FormBuilder,
     private confirmation: ConfirmationService,
     private loading: LoadingService
@@ -32,6 +56,11 @@ export class ProgramComponent implements OnInit {
 
   ngOnInit() {
     const programStreamCreator = (query) => this.programService.getList(query);
+    const workoutStreamCreator = (query) => this.workoutService.getList(query);
+
+    this.list.hookToQuery(workoutStreamCreator).subscribe((response) => {
+      this.availableWorkouts = response;
+    });
 
     this.list.hookToQuery(programStreamCreator).subscribe((response) => {
       this.programs = response;
@@ -40,9 +69,19 @@ export class ProgramComponent implements OnInit {
 
   createProgram() {
     this.selectedProgram = {} as ProgramDto; // reset the selected program
+    this.scheduleBuilderDays = [];
+    this.scheduleBuilderDays.push(new ScheduleBuilderDay());
+    this.scheduleBuilderDays.push(new ScheduleBuilderDay(1));
+
     this.buildForm();
     this.isModalOpen = true;
   }
+
+  getDayName(dayOffSet: number): string {
+    const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    return daysOfWeek[dayOffSet % 7]; // This handles the circular nature of the week
+  }
+
 
   onOngoingChange(checked: boolean) {
     this.isOngoing = checked;
@@ -58,6 +97,14 @@ export class ProgramComponent implements OnInit {
     this.loading.setLoading(true);
     this.programService.get(id).subscribe((program) => {
       this.selectedProgram = program;
+
+      this.selectedProgram.programScheduleDays.forEach(day => {
+        this.scheduleBuilderDays.push({
+          ...day,
+          isRestDay: day.activities.length === 0
+        });
+      });
+      
       this.buildForm();
       this.isModalOpen = true;
       this.loading.setLoading(false);
@@ -83,23 +130,14 @@ export class ProgramComponent implements OnInit {
       shortDescription: [this.selectedProgram.shortDescription || '', Validators.required],
       goal: [this.selectedProgram.goal || '', Validators.required],
       weeklySchedule: this.fb.array(
-        this.selectedProgram?.weeks?.map(scheduleWeek => this.buildScheduleWeek(scheduleWeek)) || []
+        this.selectedProgram?.programScheduleDays?.map(scheduleDay => this.buildScheduleDay(scheduleDay)) || []
       ),
     });
   }
 
-  buildScheduleWeek(scheduleWeek: WeeklyScheduleDto) {
+  buildScheduleDay(scheduleDay: ScheduleDayDto) {
     return this.fb.group({
-      scheduleDays: this.fb.array(
-        scheduleWeek?.scheduleDays?.map(scheduleDay => this.buildScheduleDay(scheduleDay)) || []
-      ),
-      notes: [scheduleWeek?.notes || '']
-    });
-  }
-
-  buildScheduleDay(scheduleDay) {
-    return this.fb.group({
-      dayOfWeek: [scheduleDay?.dayOfWeek || 0, Validators.required],
+      dayOffSet: [scheduleDay?.dayOffSet || 0, Validators.required],
       activities: [scheduleDay?.activities || null, Validators.required],
       notes: [scheduleDay?.notes || null]
     });

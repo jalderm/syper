@@ -6,7 +6,6 @@ using Syper.WorkoutSections;
 using Syper.WorkoutExercises;
 using Syper.Exercises;
 using Syper.Programs;
-using Syper.WeeklySchedules;
 using Syper.ScheduleDays;
 using Syper.ScheduleActivities;
 
@@ -33,8 +32,6 @@ public class SyperApplicationAutoMapperProfile : Profile
 
         CreateMap<Program, ProgramDto>();
         CreateMap<ProgramDto, Program>();
-        CreateMap<WeeklySchedule, WeeklyScheduleDto>();
-        CreateMap<WeeklyScheduleDto, WeeklySchedule>();
         CreateMap<ScheduleDay, ScheduleDayDto>();
         CreateMap<ScheduleDayDto, ScheduleDay>();
         CreateMap<ScheduleActivity, ScheduleActivityDto>();

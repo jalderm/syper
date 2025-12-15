@@ -4,6 +4,41 @@
 .bg-orange  { background-color: #fd7e14 !important; color: #fff !important; }
 .bg-purple  { background-color: #6f42c1 !important; color: #fff !important; }
 
+:root {
+  --mdc-outlined-card-outline-color: lightgrey; /* Your desired color */
+  --mat-sys-outline-variant: lightgrey; /* Ensure fallback is also set for compatibility */
+  
+  --mat-sys-corner-medium: 8px;
+  --mdc-outlined-card-container-shape: var(--mat-sys-corner-medium); /* Rounded corners */
+  --mat-sys-surface-container: white;
+  --mat-select-panel-background-color: var(--mat-sys-surface-container);
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: lightgrey!important;
+}
+
+.mat-mdc-select-min-line {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
+.cdk-global-overlay-wrapper,
+.cdk-overlay-container {
+  z-index: 10000 !important;
+}
+
+.dropdown-ff {
+  margin-left: 0px !important;
+  width: 100%;
+  padding-left: 0px !important;
+}
+
+/* For dropdowns */
+.mat-mdc-text-field-wrapper {
+  padding-right: 8px !important;
+}
+
 /* Enlarge spinner for loading */
 .abp-loading .abp-spinner { 
     font-size: 3rem !important;

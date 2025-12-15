@@ -4904,7 +4904,7 @@
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
-          "isRequired": false,
+          "isRequired": true,
           "minLength": null,
           "maxLength": 32,
           "minimum": null,
@@ -4916,7 +4916,7 @@
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
-          "isRequired": false,
+          "isRequired": true,
           "minLength": null,
           "maxLength": 32,
           "minimum": null,
@@ -4928,7 +4928,7 @@
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
-          "isRequired": false,
+          "isRequired": true,
           "minLength": null,
           "maxLength": 128,
           "minimum": null,
@@ -5164,8 +5164,8 @@
         {
           "name": "Weeks",
           "jsonName": null,
-          "type": "[Syper.WeeklySchedules.CreateUpdateWeeklyScheduleDto]",
-          "typeSimple": "[Syper.WeeklySchedules.CreateUpdateWeeklyScheduleDto]",
+          "type": "[Syper.ScheduleDays.CreateUpdateScheduleDayDto]",
+          "typeSimple": "[Syper.ScheduleDays.CreateUpdateScheduleDayDto]",
           "isRequired": true,
           "minLength": null,
           "maxLength": null,
@@ -5199,7 +5199,7 @@
           "jsonName": null,
           "type": "System.Int32",
           "typeSimple": "number",
-          "isRequired": false,
+          "isRequired": true,
           "minLength": null,
           "maxLength": null,
           "minimum": null,
@@ -5231,10 +5231,55 @@
           "regex": null
         },
         {
-          "name": "Weeks",
+          "name": "ProgramScheduleDays",
           "jsonName": null,
-          "type": "[Syper.WeeklySchedules.WeeklyScheduleDto]",
-          "typeSimple": "[Syper.WeeklySchedules.WeeklyScheduleDto]",
+          "type": "[Syper.ScheduleDays.ScheduleDayDto]",
+          "typeSimple": "[Syper.ScheduleDays.ScheduleDayDto]",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "Syper.ScheduleActivities.CreateUpdateScheduleActivityDto": {
+      "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "ActivityType",
+          "jsonName": null,
+          "type": "Syper.ActivityTypeEnum.ActivityType",
+          "typeSimple": "enum",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "WorkoutId",
+          "jsonName": null,
+          "type": "System.Guid?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ScheduleDayId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
           "isRequired": true,
           "minLength": null,
           "maxLength": null,
@@ -5289,7 +5334,7 @@
         }
       ]
     },
-    "Syper.ScheduleDays.ScheduleDayDto": {
+    "Syper.ScheduleDays.CreateUpdateScheduleDayDto": {
       "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
       "isEnum": false,
       "enumNames": null,
@@ -5301,6 +5346,63 @@
           "jsonName": null,
           "type": "System.DayOfWeek",
           "typeSimple": "enum",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Activities",
+          "jsonName": null,
+          "type": "[Syper.ScheduleActivities.CreateUpdateScheduleActivityDto]",
+          "typeSimple": "[Syper.ScheduleActivities.CreateUpdateScheduleActivityDto]",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Notes",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ProgramId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "Syper.ScheduleDays.ScheduleDayDto": {
+      "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "dayOffSet",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
           "isRequired": true,
           "minLength": null,
           "maxLength": null,
@@ -5333,7 +5435,7 @@
           "regex": null
         },
         {
-          "name": "WeeklyScheduleId",
+          "name": "ProgramId",
           "jsonName": null,
           "type": "System.Guid",
           "typeSimple": "string",
@@ -5539,84 +5641,6 @@
       ],
       "genericArguments": null,
       "properties": null
-    },
-    "Syper.WeeklySchedules.CreateUpdateWeeklyScheduleDto": {
-      "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
-      "isEnum": false,
-      "enumNames": null,
-      "enumValues": null,
-      "genericArguments": null,
-      "properties": [
-        {
-          "name": "Notes",
-          "jsonName": null,
-          "type": "System.String",
-          "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "ProgramId",
-          "jsonName": null,
-          "type": "System.Guid",
-          "typeSimple": "string",
-          "isRequired": true,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        }
-      ]
-    },
-    "Syper.WeeklySchedules.WeeklyScheduleDto": {
-      "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
-      "isEnum": false,
-      "enumNames": null,
-      "enumValues": null,
-      "genericArguments": null,
-      "properties": [
-        {
-          "name": "ScheduleDays",
-          "jsonName": null,
-          "type": "[Syper.ScheduleDays.ScheduleDayDto]",
-          "typeSimple": "[Syper.ScheduleDays.ScheduleDayDto]",
-          "isRequired": true,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "Notes",
-          "jsonName": null,
-          "type": "System.String",
-          "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "ProgramId",
-          "jsonName": null,
-          "type": "System.Guid",
-          "typeSimple": "string",
-          "isRequired": true,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        }
-      ]
     },
     "Syper.WorkoutExercises.CreateUpdateWorkoutExerciseDto": {
       "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",

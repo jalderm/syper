@@ -25,7 +25,6 @@ using Syper.WorkoutExercises;
 using Syper.Exercises;
 using Syper.ClientCoachSubscriptions;
 using Syper.Programs;
-using Syper.WeeklySchedules;
 using Syper.ScheduleDays;
 using Syper.ScheduleActivities;
 
@@ -183,20 +182,11 @@ public class SyperDbContext :
             b.ToTable(SyperConsts.DbTablePrefix + "Programs",
                 SyperConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
-            b.Property(x => x.Name).IsRequired().HasMaxLength(32);
+            b.Property(x => x.Name).IsRequired().HasMaxLength(32).IsRequired();
             b.Property(x => x.Duration).IsRequired();
             b.Property(x => x.Goal).HasMaxLength(255).IsRequired(false);
             b.Property(x => x.ShortDescription).HasMaxLength(255).IsRequired(false);
-            b.HasMany(x => x.Weeks).WithOne().HasForeignKey(x => x.ProgramId).IsRequired();
-        });
-
-        builder.Entity<WeeklySchedule>(b =>
-        {
-            b.ToTable(SyperConsts.DbTablePrefix + "WeeklySchedules",
-                SyperConsts.DbSchema);
-            b.ConfigureByConvention(); //auto configure for the base class props
-            b.Property(x => x.Notes).HasMaxLength(255).IsRequired(false);
-            b.HasMany(x => x.ScheduleDays).WithOne().HasForeignKey(x => x.WeeklyScheduleId).IsRequired();
+            b.HasMany(x => x.ProgramScheduleDays).WithOne().HasForeignKey(x => x.ProgramId).IsRequired();
         });
 
         builder.Entity<ScheduleDay>(b =>
@@ -204,7 +194,7 @@ public class SyperDbContext :
             b.ToTable(SyperConsts.DbTablePrefix + "ScheduleDays",
                 SyperConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
-            b.Property(x => x.DayOfWeek).IsRequired();
+            b.Property(x => x.DayOffSet).IsRequired();
             b.Property(x => x.Notes).HasMaxLength(255).IsRequired(false);
             b.HasMany(x => x.Activities).WithOne().HasForeignKey(x => x.ScheduleDayId).IsRequired();
         });

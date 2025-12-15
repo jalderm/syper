@@ -1,9 +1,16 @@
 import type { AuditedEntityDto } from '@abp/ng.core';
-import type { ScheduleActivityDto } from '../schedule-activities/models';
+import type { CreateUpdateScheduleActivityDto, ScheduleActivityDto } from '../schedule-activities/models';
+
+export interface CreateUpdateScheduleDayDto extends AuditedEntityDto<string> {
+  dayOfWeek: any;
+  activities: CreateUpdateScheduleActivityDto[];
+  notes?: string;
+  programId: string;
+}
 
 export interface ScheduleDayDto extends AuditedEntityDto<string> {
-  dayOfWeek: any;
+  dayOffSet: number;
   activities: ScheduleActivityDto[];
   notes?: string;
-  weeklyScheduleId: string;
+  programId: string;
 }

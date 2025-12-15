@@ -16,7 +16,10 @@ namespace Syper.Sets
         public decimal Quantity { get; set; } // 100, 5, 10
         public SetQuantityType QuantityType { get; set; } // reps / time?
         public TimeSpan? Rest { get; set; } // optional for lifting
-        public decimal? UpperPercentageOfMax { get; set; } // 1-10 scale
+
+        // Target HR zone
+        public decimal? UpperPercentageOfMaxHR { get; set; } // 1-10 scale
+        // More general
         public int? PerceivedEffort { get; set; } // 1-10 scale
 
         public Guid WorkoutExerciseId { get; set; } // Foreign key to WorkoutExercise
