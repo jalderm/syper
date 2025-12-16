@@ -36,13 +36,15 @@
     "Menu:Clients": "Clients",
     "LongWelcomeMessage": "Welcome back! Here's a quick overview of clients running this week!",
     "Welcome": "Welcome",
-
+    "AddDay": "Add day",
+    "CopyDays": "Copy days",
     "Permission:programs": "Program Management",
     "NewProgram": "New Program",
     "DurationWeeks": "Duration (weeks)",
     "EnterDescription": "Enter a brief description",
+    "EnterGoal": "Enter the program goal",
     "Enum:ClientState.0": "Pending",
     "Enum:ClientState.1": "Active",
-    "Enum:ClientState.2": "Inactive",
+    "Enum:ClientState.2": "Inactive"
   }
 }

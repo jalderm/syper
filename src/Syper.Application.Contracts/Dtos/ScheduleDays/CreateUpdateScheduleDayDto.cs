@@ -10,7 +10,7 @@ namespace Syper.ScheduleDays;
 public class CreateUpdateScheduleDayDto : AuditedEntityDto<Guid>
 {
     [Required]
-    public required DayOfWeek DayOfWeek { get; set; }
+    public required int DayOffSet { get; set; } 
     [Required]
     public required ICollection<CreateUpdateScheduleActivityDto> Activities { get; set; }
     public string? Notes { get; set; } // Optional notes for the day

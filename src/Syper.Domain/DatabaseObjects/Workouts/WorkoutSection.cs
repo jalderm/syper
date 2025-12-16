@@ -25,6 +25,7 @@ namespace Syper.WorkoutSections
         public required Guid WorkoutId { get; set; } // Foreign key to Workout
         [ForeignKey(nameof(WorkoutId))]
         public required Workout Workout { get; set; } // Foreign key to Workout[MaxLength(255)]
+        public required int SortOrder { get; set; }
 
         
 

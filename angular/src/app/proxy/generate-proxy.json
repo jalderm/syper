@@ -5130,7 +5130,7 @@
           "jsonName": null,
           "type": "System.Int32",
           "typeSimple": "number",
-          "isRequired": false,
+          "isRequired": true,
           "minLength": null,
           "maxLength": null,
           "minimum": null,
@@ -5162,7 +5162,7 @@
           "regex": null
         },
         {
-          "name": "Weeks",
+          "name": "ProgramScheduleDays",
           "jsonName": null,
           "type": "[Syper.ScheduleDays.CreateUpdateScheduleDayDto]",
           "typeSimple": "[Syper.ScheduleDays.CreateUpdateScheduleDayDto]",
@@ -5342,10 +5342,10 @@
       "genericArguments": null,
       "properties": [
         {
-          "name": "DayOfWeek",
+          "name": "DayOffSet",
           "jsonName": null,
-          "type": "System.DayOfWeek",
-          "typeSimple": "enum",
+          "type": "System.Int32",
+          "typeSimple": "number",
           "isRequired": true,
           "minLength": null,
           "maxLength": null,
@@ -5399,7 +5399,7 @@
       "genericArguments": null,
       "properties": [
         {
-          "name": "dayOffSet",
+          "name": "DayOffSet",
           "jsonName": null,
           "type": "System.Int32",
           "typeSimple": "number",
@@ -5526,6 +5526,18 @@
           "minimum": null,
           "maximum": null,
           "regex": null
+        },
+        {
+          "name": "SortOrder",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
         }
       ]
     },
@@ -5601,6 +5613,18 @@
           "jsonName": null,
           "type": "System.Guid",
           "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "SortOrder",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
           "isRequired": true,
           "minLength": null,
           "maxLength": null,
@@ -5684,6 +5708,18 @@
           "minimum": null,
           "maximum": null,
           "regex": null
+        },
+        {
+          "name": "SortOrder",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
         }
       ]
     },
@@ -5735,6 +5771,18 @@
           "jsonName": null,
           "type": "[Syper.Sets.SetDto]",
           "typeSimple": "[Syper.Sets.SetDto]",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "SortOrder",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
           "isRequired": true,
           "minLength": null,
           "maxLength": null,
@@ -5888,6 +5936,18 @@
           "minimum": null,
           "maximum": null,
           "regex": null
+        },
+        {
+          "name": "SortOrder",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
         }
       ]
     },
@@ -5945,32 +6005,20 @@
           "minimum": null,
           "maximum": null,
           "regex": null
+        },
+        {
+          "name": "SortOrder",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
         }
       ]
-    },
-    "System.DayOfWeek": {
-      "baseType": "System.Enum",
-      "isEnum": true,
-      "enumNames": [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
-      ],
-      "enumValues": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "genericArguments": null,
-      "properties": null
     },
     "Volo.Abp.Account.ChangePasswordInput": {
       "baseType": null,

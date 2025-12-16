@@ -126,8 +126,10 @@ public class SyperDbContext :
             b.Property(x => x.Quantity).IsRequired();
             b.Property(x => x.QuantityType).IsRequired();
             b.Property(x => x.Rest).IsRequired(false);
-            b.Property(x => x.UpperPercentageOfMax).IsRequired(false);
+            // TODO: Review Below
+            // b.Property(x => x.UpperPercentageOfMax).IsRequired(false);
             b.Property(x => x.PerceivedEffort).IsRequired(false);
+            b.Property(x => x.SortOrder).IsRequired();
         });
 
         builder.Entity<Workout>(b =>
@@ -151,6 +153,7 @@ public class SyperDbContext :
             b.HasOne(x => x.Workout).WithMany(x => x.WorkoutSections).HasForeignKey(x => x.WorkoutId).IsRequired();
             b.HasMany(x => x.WorkoutExercises).WithOne().HasForeignKey(x => x.WorkoutSectionId).IsRequired();
             b.Property(x => x.ShortDescription).HasMaxLength(255).IsRequired(false);
+            b.Property(x => x.SortOrder).IsRequired();
         });
 
         builder.Entity<WorkoutExercise>(b =>
@@ -164,6 +167,7 @@ public class SyperDbContext :
             b.HasOne(x => x.Exercise).WithMany().HasForeignKey(x => x.ExerciseId).IsRequired();
             b.HasMany(x => x.Sets).WithOne().HasForeignKey(x => x.WorkoutExerciseId).IsRequired();
             b.Property(x => x.Repeats).IsRequired(false);
+            b.Property(x => x.SortOrder).IsRequired();
 
         });
 

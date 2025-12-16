@@ -6,7 +6,7 @@ export interface CreateUpdateProgramDto extends AuditedEntityDto<string> {
   duration: number;
   goal?: string;
   shortDescription?: string;
-  weeks: CreateUpdateScheduleDayDto[];
+  programScheduleDays: CreateUpdateScheduleDayDto[];
 }
 
 export interface ProgramDto extends AuditedEntityDto<string> {

@@ -9,6 +9,7 @@ export interface CreateUpdateSetDto extends AuditedEntityDto<string> {
   quantityType?: SetQuantityType;
   rest?: string;
   workoutExerciseId: string;
+  sortOrder: number;
 }
 
 export interface SetDto extends AuditedEntityDto<string> {
@@ -18,4 +19,5 @@ export interface SetDto extends AuditedEntityDto<string> {
   quantityType?: SetQuantityType;
   rest?: string;
   workoutExerciseId: string;
+  sortOrder: number;
 }

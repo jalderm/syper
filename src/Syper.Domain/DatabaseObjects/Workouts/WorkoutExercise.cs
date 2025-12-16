@@ -25,11 +25,12 @@ namespace Syper.WorkoutExercises
 
         [ForeignKey(nameof(WorkoutSectionId))]
         public required WorkoutSection WorkoutSection { get; set; } // Reference to Exercise
+        public required int SortOrder { get; set; }
 
         
         public WorkoutExercise()
         {
-            
+
         }
     }
 

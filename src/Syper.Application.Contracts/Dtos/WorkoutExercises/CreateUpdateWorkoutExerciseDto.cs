@@ -12,4 +12,5 @@ public class CreateUpdateWorkoutExerciseDto : AuditedEntityDto<Guid>
     [Required]
     public required Guid WorkoutSectionId { get; set; } = new Guid(); // Foreign key to workout section
     public required List<CreateUpdateSetDto> Sets { get; set; } = new List<CreateUpdateSetDto>();
+    public required int SortOrder { get; set; }
 }

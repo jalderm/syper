@@ -13,4 +13,5 @@ public class SetDto : AuditedEntityDto<Guid>
         public SetQuantityType QuantityType { get; set; } // reps / time?
         public TimeSpan? Rest { get; set; } // optional for lifting
         public required Guid WorkoutExerciseId { get; set; } // Foreign key to workout section
+        public required int SortOrder { get; set; }
 }

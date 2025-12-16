@@ -10,8 +10,8 @@ namespace Syper.Programs;
 public class CreateUpdateProgramDto : AuditedEntityDto<Guid>
 {
     public required string Name { get; set; }
-    public int Duration { get; set; }
+    public required int Duration { get; set; }
     public string? Goal { get; set; }
     public string? ShortDescription { get; set; }
-    public required ICollection<CreateUpdateScheduleDayDto> Weeks { get; set; } = new List<CreateUpdateScheduleDayDto>();
+    public required ICollection<CreateUpdateScheduleDayDto> ProgramScheduleDays { get; set; } = new List<CreateUpdateScheduleDayDto>();
 }

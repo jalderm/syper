@@ -23,6 +23,11 @@
   padding-right: 10px !important;
 }
 
+.space-div-apart {
+  display: flex;
+  justify-content: space-between;
+}
+
 .cdk-global-overlay-wrapper,
 .cdk-overlay-container {
   z-index: 10000 !important;

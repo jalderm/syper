@@ -25,6 +25,7 @@ namespace Syper.Sets
         public Guid WorkoutExerciseId { get; set; } // Foreign key to WorkoutExercise
         [ForeignKey(nameof(WorkoutExerciseId))]
         public required WorkoutExercise WorkoutExercise { get; set; } // Reference to WorkoutExercise]
+        public required int SortOrder { get; set; }
 
         public Set()
         {

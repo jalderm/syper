@@ -6,6 +6,7 @@ export interface CreateUpdateWorkoutSectionDto extends AuditedEntityDto<string> 
   colour: string;
   workoutExercises: CreateUpdateWorkoutExerciseDto[];
   workoutId: string;
+  sortOrder: number;
 }
 
 export interface WorkoutSectionDto extends AuditedEntityDto<string> {
@@ -13,4 +14,5 @@ export interface WorkoutSectionDto extends AuditedEntityDto<string> {
   colour: string;
   workoutExercises: WorkoutExerciseDto[];
   workoutId: string;
+  sortOrder: number;
 }

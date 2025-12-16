@@ -9,6 +9,8 @@ import { ProgramDto, ProgramService } from '../proxy/programs';
 import { ScheduleDayDto } from '../proxy/schedule-days';
 import { WorkoutDto, WorkoutService } from '../proxy/workouts';
 import { ScheduleActivityDto } from '../proxy/schedule-activities';
+import { ActivityType } from '../proxy/activity-type-enum';
+import { SyperConsts } from '../shared/consts';
 
 class ScheduleBuilderDay implements ScheduleDayDto {
   dayOffSet: number;
@@ -21,11 +23,13 @@ class ScheduleBuilderDay implements ScheduleDayDto {
   creatorId?: string;
   id?: string;
   isRestDay: boolean;
+  isSelected: boolean;
 
-  constructor(dayOffSet: number = 0) {
+  constructor(dayOffSet: number = 0, programId: string = SyperConsts.blankGuid) {
     this.dayOffSet = dayOffSet;
     this.activities = [];
     this.isRestDay = false;
+    this.programId = programId;
   }
 }
 
@@ -70,8 +74,9 @@ export class ProgramComponent implements OnInit {
   createProgram() {
     this.selectedProgram = {} as ProgramDto; // reset the selected program
     this.scheduleBuilderDays = [];
-    this.scheduleBuilderDays.push(new ScheduleBuilderDay());
-    this.scheduleBuilderDays.push(new ScheduleBuilderDay(1));
+    for (var i=0; i<7; i++) {
+      this.addDay();
+    }
 
     this.buildForm();
     this.isModalOpen = true;
@@ -92,16 +97,44 @@ export class ProgramComponent implements OnInit {
       duration?.enable();
     }
   }
+  addDay() {
+    const i = this.scheduleBuilderDays.length;
+    this.scheduleBuilderDays.push(new ScheduleBuilderDay(i, this.selectedProgram.id || SyperConsts.blankGuid));
+  }
+
+  copyDays() {
+    if (this.scheduleBuilderDays.length === 0) {
+      return;
+    }
+    const daylength = this.scheduleBuilderDays.length;
+    for (var i=0; i<daylength; i++) {
+      if (this.scheduleBuilderDays[i].isSelected) {
+        const dayToCopy = JSON.parse(JSON.stringify(this.scheduleBuilderDays[i]));
+        this.scheduleBuilderDays.push(dayToCopy);
+        this.scheduleBuilderDays[this.scheduleBuilderDays.length - 1].dayOffSet = this.scheduleBuilderDays.length - 1;
+        this.scheduleBuilderDays[this.scheduleBuilderDays.length - 1].isSelected = false;
+      }
+    }
+  }
+
+  removeDay(dayIndex: number) {
+    this.scheduleBuilderDays.splice(dayIndex, 1);
+
+    for (var i=0; i<this.scheduleBuilderDays.length; i++) {
+      this.scheduleBuilderDays[i].dayOffSet = i;
+    }
+  }
 
   editProgram(id: string) {
     this.loading.setLoading(true);
     this.programService.get(id).subscribe((program) => {
       this.selectedProgram = program;
 
-      this.selectedProgram.programScheduleDays.forEach(day => {
+      this.selectedProgram?.programScheduleDays?.forEach(day => {
         this.scheduleBuilderDays.push({
           ...day,
-          isRestDay: day.activities.length === 0
+          isRestDay: day.activities.length === 0,
+          isSelected: false
         });
       });
       
@@ -158,6 +191,17 @@ export class ProgramComponent implements OnInit {
     if (this.form.invalid) {
       return;
     }
+
+    this.form.value.programScheduleDays = this.scheduleBuilderDays.map(day => ({
+      dayOffSet: day.dayOffSet,
+      activities: day.isRestDay ? [] : day.activities.map(activity => ({
+        ...activity,
+        activityType: ActivityType.Workout,
+        scheduleDayId: day.id || SyperConsts.blankGuid
+      })),
+      notes: day.notes,
+      programId: this.selectedProgram.id || SyperConsts.blankGuid
+    }));
 
     const request = this.selectedProgram.id
       ? this.programService.update(this.selectedProgram.id, this.form.value)

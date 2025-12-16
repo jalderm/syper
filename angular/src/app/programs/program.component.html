@@ -92,18 +92,43 @@
           id="program-description"
           class="form-control"
           formControlName="shortDescription"
-          rows="5"
+          rows="2"
           [placeholder]="'::EnterDescription' | abpLocalization"
+        ></textarea>
+      </div>
+
+      <div class="mt-2 col-12 col-sm-12">
+        <label for="program-description">{{ '::Description' | abpLocalization }}</label>
+        <textarea
+          id="program-description"
+          class="form-control"
+          formControlName="goal"
+          rows="2"
+          [placeholder]="'::EnterGoal' | abpLocalization"
         ></textarea>
       </div>
 
       <div class="mt-2">
         <div class="flex items-center gap-2 mb-2 p-1">
-          <!-- FontAwesome Calendar Icon -->
-          <i class="fas fa-calendar w-5 h-5 text-slate-600"></i>
-          <label class="text-sm font-medium text-slate-700">
-            Weekly Schedule
-          </label>
+          <div class="space-div-apart">
+            <div>
+              <!-- FontAwesome Calendar Icon -->
+              <i class="fas fa-calendar w-5 h-5 text-slate-600"></i>
+              <label class="text-sm font-medium text-slate-700">
+                Schedule
+              </label>
+            </div>
+            <div>
+              <button id="copyDays" class="btn btn-secondary btn-sm" style="margin-right: 0.5rem;" type="button" (click)="copyDays()">
+                <i class="fas fa-clipboard w-5 h-5 text-slate-600"></i>
+                <span>{{ '::CopyDays' | abpLocalization }}</span>
+              </button>
+              <button id="addDay" class="btn btn-primary btn-sm" type="button" (click)="addDay()">
+                <i class="fas fa-plus w-5 h-5 text-slate-600"></i>
+                <span>{{ '::AddDay' | abpLocalization }}</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         <div *ngIf="availableWorkouts.length === 0" class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
@@ -112,52 +137,64 @@
           </p>
         </div>
 
-        <div style="display: flex;">
-          <mat-card *ngFor="let day of scheduleBuilderDays" [key]="day.dayOffSet" appearance="outlined" class="m-1 col-12 col-sm-6 col-md-4">
-            <mat-card-header class="d-flex justify-content-between align-items-center">
-            <!-- Day name (left-aligned) -->
-            <mat-card-title>{{ getDayName(day.dayOffSet) }}</mat-card-title>
-
-            <!-- Rest Day Checkbox (right-aligned) -->
-            <div>
-              <label>
+        <div class="row g-2">
+          <div class="col-12 col-sm-6 col-lg-4 p-1" *ngFor="let day of scheduleBuilderDays">
+            <mat-card appearance="outlined" class="h-100 d-flex flex-column">
+              <mat-card-header class="d-flex justify-content-between align-items-center">
+                <!-- Day name (left-aligned) -->
+                <mat-card-title>
                 <input
                   type="checkbox"
-                  [(ngModel)]="day.isRestDay"
+                  [(ngModel)]="day.isSelected"
                   [ngModelOptions]="{ standalone: true }"
                 />
-                Rest Day
-              </label>
-            </div>
-          </mat-card-header>
-          <!-- *ngIf="!day.isRestDay" -->
-          <mat-card-content>
-            <mat-form-field [ngClass]="{'lightgrey': day.isRestDay}" class="dropdown-ff" appearance="outline" subscriptSizing="dynamic" floatLabel="auto">
-              <mat-label>{{ day.isRestDay == true ? ('::RestDay' | abpLocalization) : ('::Activities' | abpLocalization) }}</mat-label>
+                {{ getDayName(day.dayOffSet) }}</mat-card-title>
 
-              <mat-select
-                id="activities-{{day.dayOffSet}}"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="day.activities"
-                name="activities-{{day.dayOffSet}}"
-                multiple
-                [disabled]="day.isRestDay || !availableWorkouts?.items?.length"
-              >
-              <div *ngIf="!day.isRestDay">
-                <mat-option  *ngFor="let workout of availableWorkouts.items" [value]="workout.id">
-                  {{ workout.name }}
-                </mat-option>
-              </div>
-              <div *ngIf="day.isRestDay">
-                <mat-option *ngIf="day.isRestDay" disabled>
-                  {{ '::RestDay' | abpLocalization }}
-                </mat-option>
-              </div>
-              </mat-select>
-              <mat-hint *ngIf="!availableWorkouts?.items?.length">{{ '::NoWorkouts' | abpLocalization }}</mat-hint>
-            </mat-form-field>
-          </mat-card-content>
-          </mat-card>
+                <!-- Rest Day Checkbox (right-aligned) -->
+                <div>
+                  <label>
+                    <input
+                      type="checkbox"
+                      [(ngModel)]="day.isRestDay"
+                      [ngModelOptions]="{ standalone: true }"
+                    />
+                    Rest
+                  </label>
+
+                  <button type="button" class="btn btn-danger btn-sm ms-2" (click)="removeDay(day.dayOffSet)">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </div>
+              </mat-card-header>
+            <!-- *ngIf="!day.isRestDay" -->
+            <mat-card-content>
+              <mat-form-field [ngClass]="{'lightgrey': day.isRestDay}" class="dropdown-ff" appearance="outline" subscriptSizing="dynamic" floatLabel="auto">
+                <mat-label>{{ day.isRestDay == true ? ('::RestDay' | abpLocalization) : ('::Activities' | abpLocalization) }}</mat-label>
+
+                <mat-select
+                  id="activities-{{day.dayOffSet}}"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="day.activities"
+                  name="activities-{{day.dayOffSet}}"
+                  multiple
+                  [disabled]="day.isRestDay || !availableWorkouts?.items?.length"
+                >
+                <div *ngIf="!day.isRestDay">
+                  <mat-option  *ngFor="let workout of availableWorkouts.items" [value]="workout">
+                    {{ workout.name }}
+                  </mat-option>
+                </div>
+                <div *ngIf="day.isRestDay">
+                  <mat-option *ngIf="day.isRestDay" disabled>
+                    {{ '::RestDay' | abpLocalization }}
+                  </mat-option>
+                </div>
+                </mat-select>
+                <mat-hint *ngIf="!availableWorkouts?.items?.length">{{ '::NoWorkouts' | abpLocalization }}</mat-hint>
+              </mat-form-field>
+            </mat-card-content>
+            </mat-card>
+          </div>
         </div>
       </div>
 
@@ -171,7 +208,8 @@
     </button>
 
     <!--added save button-->
-    <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
+    <!-- [disabled]="form.invalid" -->
+    <button class="btn btn-primary" (click)="save()">
       <i class="fa fa-check mr-1"></i>
       {{ '::Save' | abpLocalization }}
     </button>

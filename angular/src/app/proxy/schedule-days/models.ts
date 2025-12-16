@@ -2,7 +2,7 @@ import type { AuditedEntityDto } from '@abp/ng.core';
 import type { CreateUpdateScheduleActivityDto, ScheduleActivityDto } from '../schedule-activities/models';
 
 export interface CreateUpdateScheduleDayDto extends AuditedEntityDto<string> {
-  dayOfWeek: any;
+  dayOffSet: number;
   activities: CreateUpdateScheduleActivityDto[];
   notes?: string;
   programId: string;

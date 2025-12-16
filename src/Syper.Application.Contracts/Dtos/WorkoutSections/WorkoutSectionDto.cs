@@ -14,5 +14,6 @@ public class WorkoutSectionDto : AuditedEntityDto<Guid>
     public required string Colour { get; set; }
     public required List<WorkoutExerciseDto> WorkoutExercises { get; set; } = new List<WorkoutExerciseDto>();
     public required Guid WorkoutId { get; set; } // Foreign key to Workout
+    public required int SortOrder { get; set; }
         
 }
