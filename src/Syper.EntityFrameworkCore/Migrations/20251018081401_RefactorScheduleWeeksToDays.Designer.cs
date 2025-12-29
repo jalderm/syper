@@ -2600,7 +2600,7 @@ namespace Syper.Migrations
             modelBuilder.Entity("Syper.ScheduleDays.ScheduleDay", b =>
                 {
                     b.HasOne("Syper.Programs.Program", null)
-                        .WithMany("ProgramScheduleDays")
+                        .WithMany("ScheduleDays")
                         .HasForeignKey("ProgramId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2814,7 +2814,7 @@ namespace Syper.Migrations
 
             modelBuilder.Entity("Syper.Programs.Program", b =>
                 {
-                    b.Navigation("ProgramScheduleDays");
+                    b.Navigation("ScheduleDays");
                 });
 
             modelBuilder.Entity("Syper.ScheduleDays.ScheduleDay", b =>

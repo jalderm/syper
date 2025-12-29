@@ -1,5 +1,5 @@
 import { ListService, PagedResultDto } from '@abp/ng.core';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
@@ -12,9 +12,28 @@ import { ScheduleActivityDto } from '../proxy/schedule-activities';
 import { ActivityType } from '../proxy/activity-type-enum';
 import { SyperConsts } from '../shared/consts';
 
+class ScheduleBuilderActivityDto implements ScheduleActivityDto {
+  id: string;
+  scheduleDayId: string;
+  type: ActivityType;
+  workoutId: string;
+  notes?: string;
+  saveId?: string; // to track original activity id for edits
+
+  constructor(init?: ScheduleBuilderActivityDto) {
+    Object.assign(this, init);
+  }
+
+  workout: WorkoutDto;
+  lastModificationTime?: string | Date;
+  lastModifierId?: string;
+  creationTime?: string | Date;
+  creatorId?: string;
+}
+
 class ScheduleBuilderDay implements ScheduleDayDto {
   dayOffSet: number;
-  activities: ScheduleActivityDto[];
+  activities: ScheduleBuilderActivityDto[];
   notes?: string;
   programId: string;
   lastModificationTime?: string | Date;
@@ -55,7 +74,8 @@ export class ProgramComponent implements OnInit {
     private workoutService: WorkoutService,
     private fb: FormBuilder,
     private confirmation: ConfirmationService,
-    private loading: LoadingService
+    private loading: LoadingService,
+    private changeDetector: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -71,7 +91,14 @@ export class ProgramComponent implements OnInit {
     });
   }
 
+  // Required to make mat-select show selected saved items
+  compareById(c1, c2): boolean {
+    return c1.id === c2.id;
+  }
+
   createProgram() {
+    this.resetForm();
+    
     this.selectedProgram = {} as ProgramDto; // reset the selected program
     this.scheduleBuilderDays = [];
     for (var i=0; i<7; i++) {
@@ -113,6 +140,11 @@ export class ProgramComponent implements OnInit {
         this.scheduleBuilderDays.push(dayToCopy);
         this.scheduleBuilderDays[this.scheduleBuilderDays.length - 1].dayOffSet = this.scheduleBuilderDays.length - 1;
         this.scheduleBuilderDays[this.scheduleBuilderDays.length - 1].isSelected = false;
+        this.scheduleBuilderDays[this.scheduleBuilderDays.length - 1].id = SyperConsts.blankGuid;
+        this.scheduleBuilderDays[this.scheduleBuilderDays.length - 1].activities.forEach(activity => {
+          activity.scheduleDayId = SyperConsts.blankGuid;
+          activity.saveId = SyperConsts.blankGuid;
+        });
       }
     }
   }
@@ -126,18 +158,33 @@ export class ProgramComponent implements OnInit {
   }
 
   editProgram(id: string) {
+    this.resetForm();
+
     this.loading.setLoading(true);
     this.programService.get(id).subscribe((program) => {
       this.selectedProgram = program;
 
-      this.selectedProgram?.programScheduleDays?.forEach(day => {
+      this.selectedProgram?.scheduleDays?.forEach(day => {
         this.scheduleBuilderDays.push({
           ...day,
           isRestDay: day.activities.length === 0,
-          isSelected: false
+          isSelected: false,
+          activities: day.activities.map(activity => {
+            return {
+              ...activity.workout,
+              saveId: activity.id, // Store the original activity id
+              id: activity.workoutId, // Use workoutId as the temporary id for the builder
+              scheduleDayId: activity.scheduleDayId,
+              type: activity.type,
+              workout: activity.workout,
+              workoutId: activity.workoutId
+            } as ScheduleBuilderActivityDto;
+          })
         });
       });
-      
+
+      this.scheduleBuilderDays = this.scheduleBuilderDays.sort((a, b) => a.dayOffSet - b.dayOffSet);
+
       this.buildForm();
       this.isModalOpen = true;
       this.loading.setLoading(false);
@@ -156,23 +203,27 @@ export class ProgramComponent implements OnInit {
   }
 
   buildForm() {
+    var ind = 0;
     this.isOngoing = false;
     this.form = this.fb.group({
+      id: [this.selectedProgram.id || SyperConsts.blankGuid],
       name: [this.selectedProgram.name || '', Validators.required],
       duration: [this.selectedProgram.duration || '', Validators.required],
       shortDescription: [this.selectedProgram.shortDescription || '', Validators.required],
       goal: [this.selectedProgram.goal || '', Validators.required],
-      weeklySchedule: this.fb.array(
-        this.selectedProgram?.programScheduleDays?.map(scheduleDay => this.buildScheduleDay(scheduleDay)) || []
+      scheduleDays: this.fb.array(
+        this.scheduleBuilderDays?.map(scheduleDay => this.buildScheduleDay(scheduleDay)) || []
       ),
     });
   }
 
   buildScheduleDay(scheduleDay: ScheduleDayDto) {
+    console.log(scheduleDay.activities);
     return this.fb.group({
       dayOffSet: [scheduleDay?.dayOffSet || 0, Validators.required],
-      activities: [scheduleDay?.activities || null, Validators.required],
-      notes: [scheduleDay?.notes || null]
+      activities: [scheduleDay?.activities || null],
+      notes: [scheduleDay?.notes || null],
+      id: [scheduleDay?.id || SyperConsts.blankGuid]
     });
   }
 
@@ -192,15 +243,24 @@ export class ProgramComponent implements OnInit {
       return;
     }
 
-    this.form.value.programScheduleDays = this.scheduleBuilderDays.map(day => ({
+    var offset = 0;
+    this.scheduleBuilderDays.forEach(day => {
+      day.dayOffSet = offset;
+      offset++;
+    });
+
+    this.form.value.scheduleDays = this.scheduleBuilderDays.map(day => ({
       dayOffSet: day.dayOffSet,
       activities: day.isRestDay ? [] : day.activities.map(activity => ({
         ...activity,
-        activityType: ActivityType.Workout,
-        scheduleDayId: day.id || SyperConsts.blankGuid
+        workoutId: activity.id,
+        type: ActivityType.Workout,
+        scheduleDayId: day.id || SyperConsts.blankGuid,
+        id: activity.saveId || SyperConsts.blankGuid
       })),
       notes: day.notes,
-      programId: this.selectedProgram.id || SyperConsts.blankGuid
+      programId: this.selectedProgram.id || SyperConsts.blankGuid,
+      id: day.id || SyperConsts.blankGuid
     }));
 
     const request = this.selectedProgram.id
@@ -212,5 +272,12 @@ export class ProgramComponent implements OnInit {
       this.form.reset();
       this.list.get();
     });
+  }
+
+  resetForm() {
+    this.form?.reset();
+    this.selectedProgram = {} as ProgramDto
+    this.scheduleBuilderDays = [];
+    this.isOngoing = false;
   }
 }

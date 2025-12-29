@@ -23,11 +23,14 @@ import * as echarts from 'echarts';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { CalendarComponent } from '../calendar/calendar.component';
 
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    
+  ],
   imports: [
     CoreModule,
     ThemeSharedModule,
@@ -39,6 +42,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     DragDropModule,
     CdkDropList,
     CdkDrag,
+    CalendarComponent,
 
     PngShared,
 
@@ -48,7 +52,6 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     ButtonModule,
     ProgressBarModule,
     TagModule,
-
     NgxEchartsModule.forRoot({ echarts })
   ],
   exports: [

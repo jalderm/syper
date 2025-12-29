@@ -5162,7 +5162,7 @@
           "regex": null
         },
         {
-          "name": "ProgramScheduleDays",
+          "name": "ScheduleDays",
           "jsonName": null,
           "type": "[Syper.ScheduleDays.CreateUpdateScheduleDayDto]",
           "typeSimple": "[Syper.ScheduleDays.CreateUpdateScheduleDayDto]",
@@ -5231,7 +5231,7 @@
           "regex": null
         },
         {
-          "name": "ProgramScheduleDays",
+          "name": "ScheduleDays",
           "jsonName": null,
           "type": "[Syper.ScheduleDays.ScheduleDayDto]",
           "typeSimple": "[Syper.ScheduleDays.ScheduleDayDto]",
@@ -5252,7 +5252,7 @@
       "genericArguments": null,
       "properties": [
         {
-          "name": "ActivityType",
+          "name": "Type",
           "jsonName": null,
           "type": "Syper.ActivityTypeEnum.ActivityType",
           "typeSimple": "enum",
@@ -5266,8 +5266,8 @@
         {
           "name": "WorkoutId",
           "jsonName": null,
-          "type": "System.Guid?",
-          "typeSimple": "string?",
+          "type": "System.Guid",
+          "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,
@@ -5297,7 +5297,7 @@
       "genericArguments": null,
       "properties": [
         {
-          "name": "ActivityType",
+          "name": "Type",
           "jsonName": null,
           "type": "Syper.ActivityTypeEnum.ActivityType",
           "typeSimple": "enum",
@@ -5313,6 +5313,18 @@
           "jsonName": null,
           "type": "System.Guid?",
           "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Workout",
+          "jsonName": null,
+          "type": "Syper.Workouts.WorkoutDto",
+          "typeSimple": "Syper.Workouts.WorkoutDto",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,

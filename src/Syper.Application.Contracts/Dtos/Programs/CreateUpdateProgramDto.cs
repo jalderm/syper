@@ -13,5 +13,5 @@ public class CreateUpdateProgramDto : AuditedEntityDto<Guid>
     public required int Duration { get; set; }
     public string? Goal { get; set; }
     public string? ShortDescription { get; set; }
-    public required ICollection<CreateUpdateScheduleDayDto> ProgramScheduleDays { get; set; } = new List<CreateUpdateScheduleDayDto>();
+    public required List<CreateUpdateScheduleDayDto> ScheduleDays { get; set; } = new List<CreateUpdateScheduleDayDto>();
 }

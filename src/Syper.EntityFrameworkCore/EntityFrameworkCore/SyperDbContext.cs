@@ -126,6 +126,9 @@ public class SyperDbContext :
             b.Property(x => x.Quantity).IsRequired();
             b.Property(x => x.QuantityType).IsRequired();
             b.Property(x => x.Rest).IsRequired(false);
+            
+            b.Property(x => x.WorkoutExerciseId).IsRequired();
+            b.HasOne(x => x.WorkoutExercise).WithMany(x => x.Sets).HasForeignKey(x => x.WorkoutExerciseId).IsRequired();
             // TODO: Review Below
             // b.Property(x => x.UpperPercentageOfMax).IsRequired(false);
             b.Property(x => x.PerceivedEffort).IsRequired(false);
@@ -190,7 +193,7 @@ public class SyperDbContext :
             b.Property(x => x.Duration).IsRequired();
             b.Property(x => x.Goal).HasMaxLength(255).IsRequired(false);
             b.Property(x => x.ShortDescription).HasMaxLength(255).IsRequired(false);
-            b.HasMany(x => x.ProgramScheduleDays).WithOne().HasForeignKey(x => x.ProgramId).IsRequired();
+            b.HasMany(x => x.ScheduleDays).WithOne().HasForeignKey(x => x.ProgramId).IsRequired();
         });
 
         builder.Entity<ScheduleDay>(b =>
@@ -200,6 +203,8 @@ public class SyperDbContext :
             b.ConfigureByConvention(); //auto configure for the base class props
             b.Property(x => x.DayOffSet).IsRequired();
             b.Property(x => x.Notes).HasMaxLength(255).IsRequired(false);
+            b.Property(x => x.ProgramId).IsRequired();
+            b.HasOne(x => x.Program).WithMany(x => x.ScheduleDays).HasForeignKey(x => x.ProgramId).IsRequired();
             b.HasMany(x => x.Activities).WithOne().HasForeignKey(x => x.ScheduleDayId).IsRequired();
         });
         
@@ -211,6 +216,7 @@ public class SyperDbContext :
             b.Property(x => x.Type).IsRequired();
             b.Property(x => x.WorkoutId).IsRequired(false);
             b.Property(x => x.ScheduleDayId).IsRequired();
+            b.HasOne(x => x.ScheduleDay).WithMany(x => x.Activities).HasForeignKey(x => x.ScheduleDayId).IsRequired();
         });
     }
 }

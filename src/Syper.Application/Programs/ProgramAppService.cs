@@ -9,22 +9,28 @@ using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using System.Linq.Dynamic.Core;
 using Syper.Programs;
+using Volo.Abp.MultiTenancy;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using Syper.ProgramRepository;
 
 namespace Syper.Programs;
 
 [Authorize(SyperPermissions.Programs.Default)]
 public class ProgramAppService : ApplicationService, IProgramAppService
 {
-    private readonly IRepository<Program, Guid> _repository;
+    private readonly IProgramRepository _repository;
+    private readonly ICurrentTenant _currentTenant;
 
-    public ProgramAppService(IRepository<Program, Guid> repository)
+    public ProgramAppService(IProgramRepository repository, ICurrentTenant currentTenant)
     {
         _repository = repository;
+        _currentTenant = currentTenant;
     }
 
     public async Task<ProgramDto> GetAsync(Guid id)
     {
-        var Program = await _repository.GetAsync(id);
+        var Program = await _repository.GetWithDetailsAsync(id);
         return ObjectMapper.Map<Program, ProgramDto>(Program);
     }
 
@@ -45,21 +51,39 @@ public class ProgramAppService : ApplicationService, IProgramAppService
         );
     }
 
+    private async Task CreateUpdateProgram(CreateUpdateProgramDto input)
+    {
+        var dbContext = await _repository.GetDbContextAsync();
+
+        var paramTenantId = new Npgsql.NpgsqlParameter("tenant_id", _currentTenant.Id ?? Guid.Empty)
+        {
+            NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Uuid
+        };
+
+        var paramProgramJson = new Npgsql.NpgsqlParameter("p_program_json", JsonSerializer.Serialize(input))
+        {
+            NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Jsonb
+        };
+
+        await dbContext.Database.ExecuteSqlRawAsync(
+            "CALL createupdate_program(@tenant_id, @p_program_json)",
+            paramTenantId,
+            paramProgramJson
+        );
+    }
+
     [Authorize(SyperPermissions.Programs.Create)]
     public async Task<ProgramDto> CreateAsync(CreateUpdateProgramDto input)
     {
-        var Program = ObjectMapper.Map<CreateUpdateProgramDto, Program>(input);
-        await _repository.InsertAsync(Program);
-        return ObjectMapper.Map<Program, ProgramDto>(Program);
+        await CreateUpdateProgram(input);
+        return null;
     }
 
     [Authorize(SyperPermissions.Programs.Edit)]
     public async Task<ProgramDto> UpdateAsync(Guid id, CreateUpdateProgramDto input)
     {
-        var Program = await _repository.GetAsync(id);
-        ObjectMapper.Map(input, Program);
-        await _repository.UpdateAsync(Program);
-        return ObjectMapper.Map<Program, ProgramDto>(Program);
+        await CreateUpdateProgram(input);
+        return null;
     }
 
     [Authorize(SyperPermissions.Programs.Delete)]

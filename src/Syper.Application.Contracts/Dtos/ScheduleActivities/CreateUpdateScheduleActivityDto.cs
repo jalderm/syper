@@ -8,9 +8,9 @@ namespace Syper.ScheduleActivities;
 
 public class CreateUpdateScheduleActivityDto : AuditedEntityDto<Guid>
 {
-    public required ActivityType ActivityType { get; set; }
-    public Guid? WorkoutId { get; set; } // if type is workout, this is the workout id
+    public required ActivityType Type { get; set; } = ActivityType.Workout;
+    public Guid WorkoutId { get; set; }
     [Required]
-    public required Guid ScheduleDayId { get; set; } // Foreign key to schedule day
+    public required Guid ScheduleDayId { get; set; } = new Guid(); // Foreign key to schedule day
 
 }

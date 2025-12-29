@@ -32,6 +32,9 @@ public class SyperApplicationAutoMapperProfile : Profile
 
         CreateMap<Program, ProgramDto>();
         CreateMap<ProgramDto, Program>();
+        CreateMap<CreateUpdateProgramDto, Program>();
+        CreateMap<CreateUpdateScheduleDayDto, ScheduleDay>();
+        CreateMap<CreateUpdateScheduleActivityDto, ScheduleActivity>();
         CreateMap<ScheduleDay, ScheduleDayDto>();
         CreateMap<ScheduleDayDto, ScheduleDay>();
         CreateMap<ScheduleActivity, ScheduleActivityDto>();

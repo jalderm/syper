@@ -14,5 +14,5 @@ public class ProgramDto : AuditedEntityDto<Guid>
     public required int Duration { get; set; }
     public string? Goal { get; set; }
     public string? ShortDescription { get; set; }
-    public required ICollection<ScheduleDayDto> ProgramScheduleDays { get; set; } = new List<ScheduleDayDto>();
+    public required ICollection<ScheduleDayDto> ScheduleDays { get; set; } = new List<ScheduleDayDto>();
 }

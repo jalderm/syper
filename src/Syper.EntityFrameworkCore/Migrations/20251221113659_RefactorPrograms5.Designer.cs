@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Syper.EntityFrameworkCore;
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Syper.Migrations
 {
     [DbContext(typeof(SyperDbContext))]
-    partial class SyperDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251221113659_RefactorPrograms5")]
+    partial class RefactorPrograms5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -342,6 +345,9 @@ namespace Syper.Migrations
                     b.Property<Guid>("ScheduleDayId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("ScheduleDayId1")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("TenantId")
                         .HasColumnType("uuid")
                         .HasColumnName("TenantId");
@@ -355,6 +361,8 @@ namespace Syper.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ScheduleDayId");
+
+                    b.HasIndex("ScheduleDayId1");
 
                     b.HasIndex("WorkoutId");
 
@@ -2572,9 +2580,15 @@ namespace Syper.Migrations
 
             modelBuilder.Entity("Syper.ScheduleActivities.ScheduleActivity", b =>
                 {
-                    b.HasOne("Syper.ScheduleDays.ScheduleDay", "ScheduleDay")
+                    b.HasOne("Syper.ScheduleDays.ScheduleDay", null)
                         .WithMany("Activities")
                         .HasForeignKey("ScheduleDayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Syper.ScheduleDays.ScheduleDay", "ScheduleDay")
+                        .WithMany()
+                        .HasForeignKey("ScheduleDayId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

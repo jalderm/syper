@@ -32,7 +32,7 @@ namespace Syper.Programs
         [MaxLength(255)]
         public string? ShortDescription { get; set; }
 
-        public required ICollection<ScheduleDay> ProgramScheduleDays { get; set; } = new List<ScheduleDay>();
+        public required List<ScheduleDay> ScheduleDays { get; set; } = new List<ScheduleDay>();
 
         public Program()
         {

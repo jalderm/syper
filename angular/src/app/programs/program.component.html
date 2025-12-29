@@ -98,9 +98,9 @@
       </div>
 
       <div class="mt-2 col-12 col-sm-12">
-        <label for="program-description">{{ '::Description' | abpLocalization }}</label>
+        <label for="program-goal">{{ '::Goal' | abpLocalization }}</label>
         <textarea
-          id="program-description"
+          id="program-goal"
           class="form-control"
           formControlName="goal"
           rows="2"
@@ -178,6 +178,7 @@
                   name="activities-{{day.dayOffSet}}"
                   multiple
                   [disabled]="day.isRestDay || !availableWorkouts?.items?.length"
+                  [compareWith]="compareById" 
                 >
                 <div *ngIf="!day.isRestDay">
                   <mat-option  *ngFor="let workout of availableWorkouts.items" [value]="workout">
@@ -216,3 +217,6 @@
   </ng-template>
 
 </abp-modal>
+
+
+<!-- <app-calendar></app-calendar> -->

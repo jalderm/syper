@@ -20,8 +20,8 @@ namespace Syper.ScheduleDays
         public string? Notes { get; set; }
 
         public required Guid ProgramId { get; set; }
-        [ForeignKey("ProgramId")]
-        public Program Program { get; set; }
+        [ForeignKey(nameof(ProgramId))]
+        public required Program Program { get; set; }
 
         public ScheduleDay()
         {

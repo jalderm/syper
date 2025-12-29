@@ -1,0 +1,30 @@
+.calendar {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.day {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.day-number {
+  font-weight: bold;
+}
+
+.events {
+  margin-top: 5px;
+  font-size: 0.9em;
+}

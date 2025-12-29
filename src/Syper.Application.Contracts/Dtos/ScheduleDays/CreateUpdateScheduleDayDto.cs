@@ -10,11 +10,11 @@ namespace Syper.ScheduleDays;
 public class CreateUpdateScheduleDayDto : AuditedEntityDto<Guid>
 {
     [Required]
-    public required int DayOffSet { get; set; } 
+    public required int DayOffSet { get; set; }  = 0;
     [Required]
-    public required ICollection<CreateUpdateScheduleActivityDto> Activities { get; set; }
+    public required List<CreateUpdateScheduleActivityDto> Activities { get; set; } = new List<CreateUpdateScheduleActivityDto>();
     public string? Notes { get; set; } // Optional notes for the day
     [Required]
-    public required Guid ProgramId { get; set; } // Foreign key to weekly schedule
+    public required Guid ProgramId { get; set; } = new Guid(); // Foreign key to weekly schedule
     
 }

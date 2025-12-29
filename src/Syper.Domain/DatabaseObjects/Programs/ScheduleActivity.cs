@@ -23,8 +23,9 @@ namespace Syper.ScheduleActivities
         public Workout? Workout { get; set; }
 
         public required Guid ScheduleDayId { get; set; }
-        [ForeignKey("ScheduleDayId")]
-        public ScheduleDay ScheduleDay { get; set; }
+        
+        [ForeignKey(nameof(ScheduleDayId))]
+        public required ScheduleDay ScheduleDay { get; set; }
 
         public ScheduleActivity()
         {
